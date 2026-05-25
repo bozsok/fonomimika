@@ -41,8 +41,8 @@
         <header class="app-header">
             <div class="app-header__title app-header__title--primary">Fonomimika tanoda</div>
             <nav class="app-header__nav">
-                <a href="#" class="app-header__nav-item app-header__nav-item--active">Tanulás</a>
-                <a href="#" class="app-header__nav-item">Játék</a>
+                <a href="#" class="app-header__nav-item app-header__nav-item--active">Tanítás</a>
+                <a href="#" class="app-header__nav-item">Gyakorlás</a>
                 <a href="#" class="app-header__nav-item">Haladás</a>
             </nav>
             <div class="app-header__actions">
@@ -59,11 +59,11 @@
                         <div class="app-sidebar__avatar">M</div>
                         <div>
                             <p class="app-sidebar__user-name">Szia, Marci!</p>
-                            <p class="app-sidebar__user-goal">Mai cél: 3 betű</p>
+                            <p class="app-sidebar__user-goal" style="display: none;">Mai cél: 3 betű</p>
                         </div>
                     </div>
                     <!-- Progress Bar Block -->
-                    <div class="progress-bar">
+                    <div class="progress-bar" style="display: none;">
                         <div class="progress-bar__bead progress-bar__bead--completed"></div>
                         <div class="progress-bar__bead progress-bar__bead--current"></div>
                         <div class="progress-bar__bead progress-bar__bead--pending"></div>
@@ -75,10 +75,10 @@
                 <!-- Alphabet Scroll Block -->
                 <div class="alphabet-scroll">
                     <div class="alphabet-scroll__grid">
-                        <button class="alphabet-scroll__btn alphabet-scroll__btn--active-secondary">A</button>
+                        <button class="alphabet-scroll__btn alphabet-scroll__btn--active-primary">A</button>
                         <button class="alphabet-scroll__btn">Á</button>
                         <button class="alphabet-scroll__btn">B</button>
-                        <button class="alphabet-scroll__btn alphabet-scroll__btn--active-primary">C</button>
+                        <button class="alphabet-scroll__btn">C</button>
                         <button class="alphabet-scroll__btn">Cs</button>
                         <button class="alphabet-scroll__btn">D</button>
                         <button class="alphabet-scroll__btn">Dz</button>
@@ -122,7 +122,7 @@
                     </div>
                 </div>
 
-                <div class="app-sidebar__footer">
+                <div class="app-sidebar__footer" style="display: none;">
                     <button class="pressable-btn pressable-btn--help">
                         <span class="material-symbols-outlined">help_outline</span>
                         <span>Súgó</span>
@@ -140,7 +140,7 @@
                             <div class="interactive-card interactive-card--pattern">
 
                                 <!-- Main letter -->
-                                <div id="main-letter" class="interactive-card__letter interactive-card__letter--print">C
+                                <div id="main-letter" class="interactive-card__letter interactive-card__letter--print">A
                                 </div>
 
                                 <!-- Instruction Overlay -->
@@ -160,7 +160,7 @@
                                         style="font-variation-settings: 'FILL' 1;">volume_up</span>
                                     Kiejtés
                                 </button>
-                                <button class="interactive-card__btn interactive-card__btn--star">
+                                <button class="interactive-card__btn interactive-card__btn--star" style="display: none;">
                                     <span class="material-symbols-outlined" style="font-size: 1.875rem;">star</span>
                                 </button>
                             </div>
@@ -184,7 +184,7 @@
                                     <span class="material-symbols-outlined video-player__icon">play_circle</span>
                                 </div>
                                 <video id="instructional-video" class="video-player__video">
-                                    <source src="/assets/video/c.mp4" type="video/mp4">
+                                    <source src="/assets/video/a.mp4" type="video/mp4">
                                     A böngésződ nem támogatja a videó lejátszását.
                                 </video>
                             </div>
@@ -193,7 +193,7 @@
 
                     <!-- Bottom Gallery: Words starting with this letter -->
                     <section class="gallery">
-                        <h2 class="gallery__title" id="gallery-title">C betűs szavak</h2>
+                        <h2 class="gallery__title" id="gallery-title">A betűs szavak</h2>
                         <div class="gallery__grid" id="gallery-grid">
                             <!-- Ide kerülnek dinamikusan a kártyák a main.js-ből -->
                         </div>

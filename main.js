@@ -108,8 +108,8 @@ initDatabase();
 const letterEl = document.getElementById('main-letter');
 
 if (letterEl) {
+    let currentLetter = 'A';
     let currentStyle = 0;
-    let currentLetter = 'C';
     let letterInterval;
     let letterTimeout;
 

@@ -2,6 +2,13 @@
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
 
+## [1.2.1] - 2026-05-25
+### Módosítva
+- Felhasználói felület feliratainak pontosítása: a "Tanulás" menüpont "Tanítás"-ra, a "Játék" menüpont pedig "Gyakorlás"-ra módosult.
+- A "Súgó" (Help) gomb átmenetileg elrejtésre került.
+- A pontszám és csillaggyűjtést jelző felületek (Mai cél, Progress bar, Csillag gomb) rejtve lettek addig, amíg a "Gyakorlás" funkció implementálása meg nem történik.
+- Az alkalmazás betöltésekor az alapértelmezett kezdőbetű "A"-ra lett visszaállítva (korábbi teszt "C" helyett), és a hozzá tartozó videó, valamint galéria is automatikusan az A betűhöz igazodik.
+
 ## [1.2.0] - 2026-05-25
 ### Hozzáadva
 - **Bejelentkezési Rendszer**: Teljes képernyős, tejüveg-hatású bejelentkezési ablak (Modal) a fő alkalmazás indításakor. A belépés előtt az alkalmazás opálosan sejlik át a háttérben.

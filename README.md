@@ -1,4 +1,4 @@
-# Fonomimika Tanoda
+# Fonomimika tanoda
 
 A Fonomimika tanoda egy gyermekeknek (általános iskola alsó tagozata) szánt edukációs webalkalmazás, amely játékosan, fonomimikai (hangokhoz rendelt kézmozdulatok) módszerekkel segíti a betűtanulást. A felület barátságos, könnyen kezelhető és teljes mértékben reszponzív.
 
