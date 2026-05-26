@@ -965,6 +965,7 @@ body {
 }
 
 .login-modal__card {
+  position: relative;
   background-color: #ffffff;
   padding: 3rem;
   border-radius: var(--radius-xl);
@@ -973,6 +974,20 @@ body {
   width: 90%;
   max-width: 480px;
   text-align: center;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 2rem;
+  color: var(--color-on-surface-variant);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--color-error, #ba1a1a);
 }
 
 .login-modal__card--avatar {

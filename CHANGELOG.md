@@ -2,6 +2,10 @@
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
 
+## [1.3.1] - 2026-05-26
+### Hozzáadva
+- **Avatar Modal Extrák**: Beépítésre került a modálba a bezáró ("X") gomb, valamint a háttérre kattintásos bezárás is aktiválódott. Helyet kapott egy "Nincs" gomb az avatar választó legelején, amellyel a felhasználó eltávolíthatja (visszavonhatja) az aktuális avatart, visszakapva a klasszikus profil ikont.
+
 ## [1.3.0] - 2026-05-25
 ### Hozzáadva
 - **Coverflow Interfész**: A régi, egyszerű betűváltás helyett egy elegáns, Coverflow-stílusú animációs elrendezés (előző és következő halvány betűk beúsztatása).

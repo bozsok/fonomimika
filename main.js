@@ -187,6 +187,22 @@ function initAvatarModal() {
     if (!grid) return;
     grid.innerHTML = '';
     
+    // A "Nincs" gomb (törlés)
+    const noneBtn = document.createElement('div');
+    noneBtn.className = 'avatar-option';
+    noneBtn.style.display = 'flex';
+    noneBtn.style.alignItems = 'center';
+    noneBtn.style.justifyContent = 'center';
+    noneBtn.style.backgroundColor = 'var(--color-surface-variant)';
+    noneBtn.style.color = 'var(--color-on-surface-variant)';
+    noneBtn.style.fontWeight = 'bold';
+    noneBtn.style.fontSize = '1.2rem';
+    noneBtn.innerText = 'Nincs';
+    noneBtn.addEventListener('click', () => {
+        saveAvatar(null);
+    });
+    grid.appendChild(noneBtn);
+    
     for (let i = 0; i < 40; i++) {
         const btn = document.createElement('div');
         btn.className = `avatar-option avatar-sprite avatar-${i}`;
@@ -202,6 +218,27 @@ function initAvatarModal() {
         headerAvatarBtn.addEventListener('click', () => {
             if (currentStudent) {
                 document.getElementById('avatar-modal').style.display = 'flex';
+            }
+        });
+    }
+
+    const avatarModal = document.getElementById('avatar-modal');
+    const closeBtn = document.getElementById('close-avatar-modal');
+
+    // Bezáró X gomb
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            avatarModal.style.display = 'none';
+            document.getElementById('app-content').style.display = 'block';
+        });
+    }
+
+    // Bezárás kattintásra a modal hátterén (kívül a kártyán)
+    if (avatarModal) {
+        avatarModal.addEventListener('click', (e) => {
+            if (e.target === avatarModal) {
+                avatarModal.style.display = 'none';
+                document.getElementById('app-content').style.display = 'block';
             }
         });
     }
@@ -240,10 +277,11 @@ function updateUserAvatarUI() {
             headerAvatarBtn.style.padding = '0';
         }
     } else {
+        // Alapértelmezett visszaállítása, ha "Nincs" lett kiválasztva
         if (headerAvatarBtn) {
             headerAvatarBtn.classList.add('material-symbols-outlined');
-            headerAvatarBtn.innerHTML = 'account_circle';
-            headerAvatarBtn.style.padding = '0.5rem';
+            headerAvatarBtn.innerHTML = `account_circle`;
+            headerAvatarBtn.style.padding = '';
         }
     }
 }
