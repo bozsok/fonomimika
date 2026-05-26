@@ -86,10 +86,17 @@ function initLoginUI() {
     loginBtn.addEventListener('click', () => {
         if (selectedStudent) {
             currentStudent = selectedStudent;
-            // Update UI
-            loginModal.style.display = 'none';
-            appContent.style.display = 'block';
             
+            // Re-read avatarId from JSON fallback if needed
+            const dbIndex = studentDB?.students?.findIndex(s => s.name === currentStudent.name);
+            if (dbIndex !== -1 && studentDB.students[dbIndex].avatarId !== undefined) {
+                currentStudent.avatarId = studentDB.students[dbIndex].avatarId;
+            }
+
+            loginModal.style.display = 'none';
+            
+            // Frissítjük a neveket
+            const sidebarUserInfo = document.getElementById('sidebar-user-info');
             const avatarLetter = currentStudent.name.charAt(0).toUpperCase();
             sidebarUserInfo.innerHTML = `
                 <div class="app-sidebar__avatar">${avatarLetter}</div>
@@ -98,13 +105,124 @@ function initLoginUI() {
                     <p style="font-size: 0.85rem; color: var(--color-on-surface-variant); margin: 0;">${currentStudent.class}</p>
                 </div>
             `;
+            
+            if (typeof currentStudent.avatarId === 'undefined' || currentStudent.avatarId === null) {
+                // Nincs avatar, nyissuk meg a választót!
+                document.getElementById('avatar-modal').style.display = 'flex';
+            } else {
+                // Van avatar, mehetünk a főképernyőre
+                updateUserAvatarUI();
+                appContent.style.display = 'block';
+            }
         }
     });
+}
+// --- Avatar Generátor és Logika ---
+function generateAvatarSpriteStyles() {
+    const config = {
+        totalAvatars: 40, cols: 8, rows: 5,
+        imageW: 982, imageH: 614,
+        offsetX: 20, offsetY: 20, // Kicsit megnövelve a margót
+        boxSize: 80, smallBoxSize: 40
+    };
+    
+    const cellW = (config.imageW - (2 * config.offsetX)) / config.cols;
+    const cellH = (config.imageH - (2 * config.offsetY)) / config.rows;
+    const scale = config.boxSize / cellW;
+    const smallScale = config.smallBoxSize / cellW;
+
+    let styleCSS = `
+    .avatar-sprite { background-size: ${config.imageW * scale}px ${config.imageH * scale}px; }
+    .avatar-sprite-sm { background-image: url('./assets/pics/avatars.png'); background-size: ${config.imageW * smallScale}px ${config.imageH * smallScale}px; background-repeat: no-repeat; width: ${config.smallBoxSize}px; height: ${config.smallBoxSize}px; border-radius: 50%; display: inline-block; background-color: #fff; }
+    `;
+
+    for (let i = 0; i < config.totalAvatars; i++) {
+        const col = i % config.cols;
+        const row = Math.floor(i / config.cols);
+        
+        const posX = -((config.offsetX + col * cellW) * scale);
+        const posY = -((config.offsetY + row * cellH) * scale);
+        styleCSS += `.avatar-${i} { background-position: ${posX}px ${posY}px; }\n`;
+        
+        const posSmallX = -((config.offsetX + col * cellW) * smallScale);
+        const posSmallY = -((config.offsetY + row * cellH) * smallScale);
+        styleCSS += `.avatar-sm-${i} { background-position: ${posSmallX}px ${posSmallY}px; }\n`;
+    }
+
+    const styleEl = document.createElement('style');
+    styleEl.innerHTML = styleCSS;
+    document.head.appendChild(styleEl);
+}
+
+function initAvatarModal() {
+    generateAvatarSpriteStyles();
+    const grid = document.getElementById('avatar-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    
+    for (let i = 0; i < 40; i++) {
+        const btn = document.createElement('div');
+        btn.className = `avatar-option avatar-sprite avatar-${i}`;
+        btn.dataset.avatarId = i;
+        btn.addEventListener('click', () => {
+            saveAvatar(i);
+        });
+        grid.appendChild(btn);
+    }
+    
+    const headerAvatarBtn = document.querySelectorAll('.app-header__btn')[0]; 
+    if (headerAvatarBtn) {
+        headerAvatarBtn.addEventListener('click', () => {
+            if (currentStudent) {
+                document.getElementById('avatar-modal').style.display = 'flex';
+            }
+        });
+    }
+}
+
+function saveAvatar(avatarId) {
+    if (!currentStudent) return;
+    
+    currentStudent.avatarId = avatarId;
+    const dbIndex = studentDB.students.findIndex(s => s.name === currentStudent.name);
+    if (dbIndex !== -1) {
+        studentDB.students[dbIndex].avatarId = avatarId;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(studentDB));
+    }
+    
+    document.getElementById('avatar-modal').style.display = 'none';
+    document.getElementById('app-content').style.display = 'block';
+    
+    updateUserAvatarUI();
+}
+
+function updateUserAvatarUI() {
+    if (!currentStudent) return;
+    
+    let aId = currentStudent.avatarId;
+    const headerAvatarBtn = document.querySelectorAll('.app-header__btn')[0]; 
+    
+    // Csak a header ikont frissítjük az avatárral (a sidebar megmarad a kezdőbetűnek, ahogy a belépés beállítja)
+    if (typeof aId !== 'undefined' && aId !== null) {
+        const smallSpriteClass = `avatar-sprite-sm avatar-sm-${aId}`;
+        
+        if (headerAvatarBtn) {
+            headerAvatarBtn.classList.remove('material-symbols-outlined');
+            headerAvatarBtn.innerHTML = `<div class="${smallSpriteClass}"></div>`;
+            headerAvatarBtn.style.padding = '0';
+        }
+    } else {
+        if (headerAvatarBtn) {
+            headerAvatarBtn.classList.add('material-symbols-outlined');
+            headerAvatarBtn.innerHTML = 'account_circle';
+            headerAvatarBtn.style.padding = '0.5rem';
+        }
+    }
 }
 
 // Indítás
 initDatabase();
-
+initAvatarModal();
 const coverflowEl = document.getElementById('letter-coverflow');
 
 if (coverflowEl) {
@@ -369,6 +487,35 @@ if (coverflowEl) {
         // Videó végén overlay ismét látszik
         videoEl.addEventListener('ended', () => {
             overlayBtn.style.display = 'flex';
+        });
+    }
+
+    // --- Kiejtés Audio Vezérlés ---
+    const pronounceBtn = document.getElementById('btn-pronounce');
+    const letterAudio = new Audio();
+    let isPlaying = false;
+
+    if (pronounceBtn) {
+        pronounceBtn.addEventListener('click', () => {
+            if (isPlaying && letterAudio.src.includes(currentLetter.toLowerCase())) {
+                // Ha épp szól és újra rányom, induljon újra
+                letterAudio.currentTime = 0;
+            } else {
+                letterAudio.src = `./assets/sound/${currentLetter.toLowerCase()}.mp3`;
+                letterAudio.play().catch(e => console.warn("Hanglejátszás hiba:", e));
+                isPlaying = true;
+                pronounceBtn.classList.add('is-playing');
+            }
+        });
+
+        letterAudio.addEventListener('ended', () => {
+            isPlaying = false;
+            pronounceBtn.classList.remove('is-playing');
+        });
+        
+        letterAudio.addEventListener('error', () => {
+            isPlaying = false;
+            pronounceBtn.classList.remove('is-playing');
         });
     }
 }

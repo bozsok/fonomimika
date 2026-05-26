@@ -6,6 +6,8 @@ Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fono
 ### Hozzáadva
 - **Coverflow Interfész**: A régi, egyszerű betűváltás helyett egy elegáns, Coverflow-stílusú animációs elrendezés (előző és következő halvány betűk beúsztatása).
 - **Betűházikó (SVG)**: A kisiskolás módszertanhoz (betűmagasság magyarázatához) igazodva egy vektoros "házikó" (tető, lakótér, pince lépcső) rajzolódott a 4-vonalas kártya hátterébe, amely pixelpontosan illeszkedik a CSS alapvonalakra.
+- **Kiejtés Hanglejátszó (Audio)**: A betűkártyán található hangszóró ikonra kattintva a program betölti és lejátssza az adott betű hangját (`.mp3`). Lejátszás alatt a gomb interaktívan, pulzáló animációval jelez vissza. Újbóli kattintásra a hang azonnal újraindul a zavaró hangátfedések elkerülése végett.
+- **Avatar Kiválasztó Rendszer (CSS Sprite + LocalStorage)**: Bevezetésre került egy tanulói avatar választó, amely induláskor felugrik, ha a diák profiljához még nem tartozik figura. A rendszer egy intelligens JS-generátor által vezérelt CSS Sprite-tal jeleníti meg a 40 avatart (így egyetlen képletöltéssel és nulla villogással működik). A kiválasztott avatar bekerül a fejlécbe és a LocalStorage-be (JSON olvasási fallback-el).
 
 ### Módosítva
 - A Tanulási hős-szekció (Layout) átrendezése: az alsó videó teljes szélességet kapott, az interaktív betűkártya (stabil, 2:1 képaránnyal és 15rem széles házikóval) és a mimicry kártya egymás mellé kerültek a felső sorba.
@@ -16,6 +18,7 @@ Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fono
 - Teljesítmény-optimalizáció (Early Exit) az ábécé gomboknál: a videó villogásának és felesleges újratöltésének megakadályozása ismételt kattintás esetén.
 - Sima, villámgyors tartalomváltás (Cross-fade érzet) bevezetése: betűkattintáskor a UI konténerek fixek maradnak, és kizárólag a képek/szövegek halványulnak el, majd azonnal az új tartalom jelenik meg.
 - A Galéria (`renderGallery`) logikájának refaktorálása: nem építi újra a kártyákat minden kattintásnál, csak a meglévő dobozokban lévő tartalmat (kép, szó) frissíti.
+- A fő interaktív betűkártya és a Mimicry kártya magasságának szinkronizálása a Grid elrendezésben (a korábbi kötelező `aspect-ratio` kiváltásával mindkét elem megkapta a rugalmas `height: 100%`-ot, így a két kártya alja tökéletesen egy síkba került).
 
 ## [1.2.1] - 2026-05-25
 ### Módosítva
