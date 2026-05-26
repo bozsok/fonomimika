@@ -2,6 +2,21 @@
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
 
+## [1.3.0] - 2026-05-25
+### Hozzáadva
+- **Coverflow Interfész**: A régi, egyszerű betűváltás helyett egy elegáns, Coverflow-stílusú animációs elrendezés (előző és következő halvány betűk beúsztatása).
+- **Betűházikó (SVG)**: A kisiskolás módszertanhoz (betűmagasság magyarázatához) igazodva egy vektoros "házikó" (tető, lakótér, pince lépcső) rajzolódott a 4-vonalas kártya hátterébe, amely pixelpontosan illeszkedik a CSS alapvonalakra.
+
+### Módosítva
+- A Tanulási hős-szekció (Layout) átrendezése: az alsó videó teljes szélességet kapott, az interaktív betűkártya (stabil, 2:1 képaránnyal és 15rem széles házikóval) és a mimicry kártya egymás mellé kerültek a felső sorba.
+- A kártya `container-type: size` CSS bugjának javítása (amely a betűk eltűnését okozta ablakátméretezéskor) stabil `inline-size` és `cqw` használatával.
+- Navigációs (jobb/bal) lapozó nyilak áthelyezése a kártya bal alsó sarkába.
+- Többkarakteres betűk (pl. Cs, Dzs) esetén intelligens betűméret-csökkentés a JS-ben, a vizuális összeérés megelőzése érdekében.
+- A bal oldali ábécé gombok hivatkozási hibájának (ReferenceError) javítása a `main.js`-ben.
+- Teljesítmény-optimalizáció (Early Exit) az ábécé gomboknál: a videó villogásának és felesleges újratöltésének megakadályozása ismételt kattintás esetén.
+- Sima, villámgyors tartalomváltás (Cross-fade érzet) bevezetése: betűkattintáskor a UI konténerek fixek maradnak, és kizárólag a képek/szövegek halványulnak el, majd azonnal az új tartalom jelenik meg.
+- A Galéria (`renderGallery`) logikájának refaktorálása: nem építi újra a kártyákat minden kattintásnál, csak a meglévő dobozokban lévő tartalmat (kép, szó) frissíti.
+
 ## [1.2.1] - 2026-05-25
 ### Módosítva
 - Felhasználói felület feliratainak pontosítása: a "Tanulás" menüpont "Tanítás"-ra, a "Játék" menüpont pedig "Gyakorlás"-ra módosult.

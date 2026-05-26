@@ -135,50 +135,77 @@
                 <div class="app-main__content">
                     <!-- Learning Hero Section -->
                     <div class="learning-hero">
-                        <!-- The Interactive Letter Card -->
-                        <div class="learning-hero__interactive">
-                            <div class="interactive-card interactive-card--pattern">
 
-                                <!-- Main letter -->
-                                <div id="main-letter" class="interactive-card__letter interactive-card__letter--print">A
-                                </div>
+                        <!-- Top Row: Interactive Card + Mimicry -->
+                        <div class="learning-hero__top">
+                            <!-- The Interactive Letter Card -->
+                            <div class="learning-hero__interactive">
+                                <div class="interactive-card interactive-card--pattern">
 
-                                <!-- Instruction Overlay -->
-                                <div class="interactive-card__overlay">
-                                    <div class="interactive-card__dot interactive-card__dot--active"></div>
-                                    <div class="interactive-card__dot"></div>
-                                    <div class="interactive-card__dot"></div>
-                                    <div class="interactive-card__dot"></div>
+                                    <!-- House Indicator (SVG) -->
+                                    <svg class="house-indicator" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                        <!-- Tető (25-45) -->
+                                        <polyline points="0,45 35,25 70,45 0,45" fill="none" stroke="#2c5e7a"
+                                            stroke-width="2" vector-effect="non-scaling-stroke" />
+                                        <!-- Fal (45-65.2) -->
+                                        <rect x="0" y="45" width="70" height="20.4" fill="none" stroke="#2c5e7a"
+                                            stroke-width="2" vector-effect="non-scaling-stroke" />
+                                        <!-- Pince lépcső (65.2-85) -->
+                                        <polyline points="70,65.4 70,75 100,75 100,85" fill="none" stroke="#2c5e7a"
+                                            stroke-width="2" vector-effect="non-scaling-stroke" />
+                                    </svg>
+
+                                    <!-- Coverflow Scene -->
+                                    <div class="coverflow-scene">
+                                        <div class="coverflow" id="letter-coverflow">
+                                            <div class="coverflow__item interactive-card__letter interactive-card__letter--print"
+                                                data-position="active" id="face-0">A</div>
+                                            <div class="coverflow__item interactive-card__letter interactive-card__letter--print"
+                                                data-position="next" id="face-1">a</div>
+                                            <div class="coverflow__item interactive-card__letter interactive-card__letter--script"
+                                                data-position="hidden" id="face-2">A</div>
+                                            <div class="coverflow__item interactive-card__letter interactive-card__letter--script"
+                                                data-position="prev" id="face-3">a</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Navigation Arrows -->
+                                    <button class="coverflow-nav coverflow-nav--prev" id="coverflow-prev">
+                                        <span class="material-symbols-outlined">chevron_left</span>
+                                    </button>
+                                    <button class="coverflow-nav coverflow-nav--next" id="coverflow-next">
+                                        <span class="material-symbols-outlined">chevron_right</span>
+                                    </button>
+
+                                    <!-- Floating Actions (Pronounce) -->
+                                    <button
+                                        class="interactive-card__btn interactive-card__btn--pronounce interactive-card__btn--floating"
+                                        id="btn-pronounce">
+                                        <span class="material-symbols-outlined interactive-card__icon-bounce"
+                                            style="font-variation-settings: 'FILL' 1;">volume_up</span>
+                                    </button>
+                                    <button class="interactive-card__btn interactive-card__btn--star"
+                                        style="display: none;">
+                                        <span class="material-symbols-outlined" style="font-size: 1.875rem;">star</span>
+                                    </button>
                                 </div>
                             </div>
 
-                            <!-- Main Actions -->
-                            <div class="interactive-card__actions">
-                                <button class="interactive-card__btn interactive-card__btn--pronounce"
-                                    id="btn-pronounce">
-                                    <span class="material-symbols-outlined interactive-card__icon-bounce"
-                                        style="font-variation-settings: 'FILL' 1;">volume_up</span>
-                                    Kiejtés
-                                </button>
-                                <button class="interactive-card__btn interactive-card__btn--star" style="display: none;">
-                                    <span class="material-symbols-outlined" style="font-size: 1.875rem;">star</span>
-                                </button>
+                            <!-- Phonomimicry Gesture Image -->
+                            <div class="learning-hero__media">
+                                <div class="mimicry-card">
+                                    <div class="mimicry-card__badge">A mozdulat</div>
+                                    <div class="mimicry-card__media-wrapper">
+                                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVBIxgnCOyBcF0ITX2X4WJEhskgLi3ZrhGxJ-oHA04WmfWJLwuKrfFvJr0YXmoheBc1JMSF5UvsP_wKQbuKkoumrwKTJrWh0qy12xzAYYFVCMP8nhY5r9KKFq8uw0FfhQjT2D6ATgBkfNQsP4-Yjj3YZ_4RLDQLK3_sACBDaxbbd_aJWqZ39OJKfASFO_apbPwh-Djg0APO_vIOQdRWwiJyMU0P8mNcn3HIZkGn_IWuQ26MtFEZitxFAYoUEJseC6vwTV2P-43VjE"
+                                            alt="Fonomimika mozdulat" class="mimicry-card__image">
+                                    </div>
+                                    <p class="mimicry-card__text">"Kerekítsük a szánkat!"</p>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Media & Mimicry Section -->
-                        <div class="learning-hero__media">
-                            <!-- Phonomimicry Gesture Image -->
-                            <div class="mimicry-card">
-                                <div class="mimicry-card__badge">A mozdulat</div>
-                                <div class="mimicry-card__media-wrapper">
-                                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVBIxgnCOyBcF0ITX2X4WJEhskgLi3ZrhGxJ-oHA04WmfWJLwuKrfFvJr0YXmoheBc1JMSF5UvsP_wKQbuKkoumrwKTJrWh0qy12xzAYYFVCMP8nhY5r9KKFq8uw0FfhQjT2D6ATgBkfNQsP4-Yjj3YZ_4RLDQLK3_sACBDaxbbd_aJWqZ39OJKfASFO_apbPwh-Djg0APO_vIOQdRWwiJyMU0P8mNcn3HIZkGn_IWuQ26MtFEZitxFAYoUEJseC6vwTV2P-43VjE"
-                                        alt="Fonomimika mozdulat" class="mimicry-card__image">
-                                </div>
-                                <p class="mimicry-card__text">"Kerekítsük a szánkat!"</p>
-                            </div>
-
-                            <!-- Instructional Video -->
+                        <!-- Bottom Row: Instructional Video -->
+                        <div class="learning-hero__bottom">
                             <div class="video-player">
                                 <div class="video-player__overlay" id="video-overlay-btn">
                                     <span class="material-symbols-outlined video-player__icon">play_circle</span>
@@ -189,6 +216,7 @@
                                 </video>
                             </div>
                         </div>
+
                     </div>
 
                     <!-- Bottom Gallery: Words starting with this letter -->

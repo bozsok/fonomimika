@@ -105,55 +105,78 @@ function initLoginUI() {
 // Indítás
 initDatabase();
 
-const letterEl = document.getElementById('main-letter');
+const coverflowEl = document.getElementById('letter-coverflow');
 
-if (letterEl) {
+if (coverflowEl) {
     let currentLetter = 'A';
-    let currentStyle = 0;
-    let letterInterval;
-    let letterTimeout;
+    let activeIndex = 0; // 0: front, 1: right, 2: back, 3: left
 
-    function startLetterAnimation() {
-        if (letterInterval) clearInterval(letterInterval);
-        if (letterTimeout) clearTimeout(letterTimeout);
+    function updateCoverflowFaces(letter) {
+        const face0 = document.getElementById('face-0');
+        const face1 = document.getElementById('face-1');
+        const face2 = document.getElementById('face-2');
+        const face3 = document.getElementById('face-3');
         
-        const styles = [
-            { text: currentLetter.toUpperCase(), font: 'interactive-card__letter--print' },
-            { text: currentLetter.toLowerCase(), font: 'interactive-card__letter--print' },
-            { text: currentLetter.toUpperCase(), font: 'interactive-card__letter--script' },
-            { text: currentLetter.toLowerCase(), font: 'interactive-card__letter--script' }
-        ];
+        if (face0 && face1 && face2 && face3) {
+            face0.innerText = letter.toUpperCase();
+            face1.innerText = letter.toLowerCase();
+            face2.innerText = letter.toUpperCase();
+            face3.innerText = letter.toLowerCase();
+        }
 
-        // Azonnali frissítés és opacitás/skálázás alapállapotba állítása
-        letterEl.innerText = styles[0].text;
-        letterEl.className = `interactive-card__letter ${styles[0].font}`;
-        letterEl.style.opacity = '1';
-        letterEl.style.transform = 'scale(1)';
+        // Dinamikus CSS változók a hosszú betűkhöz
+        let spread = '24%';
+        let fontSize = '25cqw';
+        
+        if (letter.length === 2) {
+            fontSize = '20cqw';
+        } else if (letter.length >= 3) {
+            fontSize = '17cqw';
+        }
 
-        letterInterval = setInterval(() => {
-            currentStyle = (currentStyle + 1) % styles.length;
-
-            letterEl.style.opacity = '0';
-            letterEl.style.transform = 'scale(0.8)';
-
-            letterTimeout = setTimeout(() => {
-                letterEl.innerText = styles[currentStyle].text;
-                letterEl.className = `interactive-card__letter ${styles[currentStyle].font}`;
-                letterEl.style.opacity = '1';
-                letterEl.style.transform = 'scale(1)';
-
-                document.querySelectorAll('.interactive-card__dot').forEach((dot, index) => {
-                    if (index === currentStyle) {
-                        dot.classList.add('interactive-card__dot--active');
-                    } else {
-                        dot.classList.remove('interactive-card__dot--active');
-                    }
-                });
-            }, 300);
-        }, 3000);
+        coverflowEl.style.setProperty('--card-spread', spread);
+        coverflowEl.style.setProperty('--card-font-size', fontSize);
     }
 
-    startLetterAnimation();
+    function renderCoverflowState() {
+        const items = [
+            document.getElementById('face-0'),
+            document.getElementById('face-1'),
+            document.getElementById('face-2'),
+            document.getElementById('face-3')
+        ];
+        
+        items.forEach((item, i) => {
+            if (!item) return;
+            if (i === activeIndex) {
+                item.setAttribute('data-position', 'active');
+            } else if (i === (activeIndex + 1) % 4) {
+                item.setAttribute('data-position', 'next');
+            } else if (i === (activeIndex + 3) % 4) { // (activeIndex - 1)
+                item.setAttribute('data-position', 'prev');
+            } else {
+                item.setAttribute('data-position', 'hidden');
+            }
+        });
+    }
+
+    const prevBtn = document.getElementById('coverflow-prev');
+    const nextBtn = document.getElementById('coverflow-next');
+
+    if (prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => {
+            activeIndex = (activeIndex + 3) % 4; // Vissza (balra nyíl)
+            renderCoverflowState();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            activeIndex = (activeIndex + 1) % 4; // Előre (jobbra nyíl)
+            renderCoverflowState();
+        });
+    }
+
+    updateCoverflowFaces(currentLetter);
+    renderCoverflowState();
 
     // Adatbázis a galériához minden betűre
     const galleryData = {
@@ -211,29 +234,47 @@ if (letterEl) {
 
         const upperLetter = letter.toUpperCase();
         titleEl.innerText = `${upperLetter} betűs szavak`;
-        gridEl.innerHTML = '';
 
         const items = galleryData[upperLetter];
 
         if (items && items.length > 0) {
-            items.forEach(item => {
-                const imgContent = item.img
-                    ? `<img src="${item.img}" alt="${item.word}" class="gallery__img">`
-                    : `<span class="material-symbols-outlined gallery__placeholder-icon">image</span>`;
+            const existingCards = gridEl.querySelectorAll('.gallery__card');
 
-                const cardHTML = `
-                    <div class="gallery__card">
-                        <div class="gallery__img-wrap">
-                            ${imgContent}
+            if (existingCards.length === 0) {
+                // Első renderelés (vagy üres grid esetén)
+                gridEl.innerHTML = '';
+                items.forEach((item, index) => {
+                    const imgContent = item.img
+                        ? `<img src="${item.img}" alt="${item.word}" class="gallery__img" id="gallery-img-${index}">`
+                        : `<span class="material-symbols-outlined gallery__placeholder-icon" id="gallery-img-${index}">image</span>`;
+
+                    const cardHTML = `
+                        <div class="gallery__card" id="gallery-card-${index}">
+                            <div class="gallery__img-wrap" id="gallery-wrap-${index}">
+                                ${imgContent}
+                            </div>
+                            <div class="gallery__content">
+                                <p class="gallery__word-title" id="gallery-title-${index}">${item.word}</p>
+                                <div class="gallery__divider"></div>
+                            </div>
                         </div>
-                        <div class="gallery__content">
-                            <p class="gallery__word-title">${item.word}</p>
-                            <div class="gallery__divider"></div>
-                        </div>
-                    </div>
-                `;
-                gridEl.insertAdjacentHTML('beforeend', cardHTML);
-            });
+                    `;
+                    gridEl.insertAdjacentHTML('beforeend', cardHTML);
+                });
+            } else {
+                // Kártyák dobozai már léteznek, csak a tartalmat cseréljük!
+                items.forEach((item, index) => {
+                    const wrapEl = document.getElementById(`gallery-wrap-${index}`);
+                    const titleEl = document.getElementById(`gallery-title-${index}`);
+                    
+                    if (wrapEl && titleEl) {
+                        wrapEl.innerHTML = item.img
+                            ? `<img src="${item.img}" alt="${item.word}" class="gallery__img" id="gallery-img-${index}">`
+                            : `<span class="material-symbols-outlined gallery__placeholder-icon" id="gallery-img-${index}">image</span>`;
+                        titleEl.innerText = item.word;
+                    }
+                });
+            }
         }
     }
 
@@ -243,6 +284,11 @@ if (letterEl) {
     // Ábécé gombok logikája
     document.querySelectorAll('.alphabet-scroll__btn').forEach(btn => {
         btn.addEventListener('click', () => {
+            const newLetter = btn.innerText.trim();
+            
+            // Ha ugyanarra a betűre kattint, ne töltsön be mindent újra (villogás megelőzése)
+            if (newLetter === currentLetter) return;
+
             // Aktív állapot eltávolítása
             document.querySelectorAll('.alphabet-scroll__btn').forEach(b => {
                 b.classList.remove('alphabet-scroll__btn--active-primary');
@@ -250,36 +296,51 @@ if (letterEl) {
             // Új gomb aktívvá tétele
             btn.classList.add('alphabet-scroll__btn--active-primary');
 
-            // Betű frissítése
-            currentLetter = btn.innerText.trim();
-            currentStyle = 0;
-
-            // Pöttyök azonnali nullázása új betű kiválasztásakor
-            document.querySelectorAll('.interactive-card__dot').forEach((dot, index) => {
-                if (index === 0) {
-                    dot.classList.add('interactive-card__dot--active');
-                } else {
-                    dot.classList.remove('interactive-card__dot--active');
-                }
-            });
-
-            startLetterAnimation();
-
-            // Videó frissítése
+            // --- ANIMÁCIÓ KEZDETE CSAK A BELSŐ TARTALOMRA ---
+            const coverflowEl = document.getElementById('letter-coverflow');
             const videoEl = document.getElementById('instructional-video');
-            if (videoEl) {
-                const videoSource = videoEl.querySelector('source');
-                videoSource.src = `./assets/video/${currentLetter.toLowerCase()}.mp4`;
-                videoEl.load();
+            const mimicryImg = document.querySelector('.mimicry-card__image'); // Ha van mimicry kép
+            const galleryContentEls = document.querySelectorAll('.gallery__img-wrap, .gallery__word-title');
+            
+            // Fade Out (Kizárólag a tartalom halványul)
+            if (coverflowEl) coverflowEl.style.opacity = '0';
+            if (videoEl) videoEl.style.opacity = '0';
+            if (mimicryImg) mimicryImg.style.opacity = '0';
+            galleryContentEls.forEach(el => el.style.opacity = '0');
 
-                const overlayBtn = document.getElementById('video-overlay-btn');
-                if (overlayBtn) {
-                    overlayBtn.style.display = 'flex';
+            // Gyors 150ms után (negyed másodpercen belüli folyamat) tartalom csere és Fade In
+            setTimeout(() => {
+                // Betű frissítése
+                currentLetter = newLetter;
+
+                // Coverflow arcok frissítése és alapállapotba hozása
+                activeIndex = 0;
+                updateCoverflowFaces(currentLetter);
+                renderCoverflowState();
+
+                // Videó frissítése
+                if (videoEl) {
+                    const videoSource = videoEl.querySelector('source');
+                    videoSource.src = `./assets/video/${currentLetter.toLowerCase()}.mp4`;
+                    videoEl.load();
+
+                    const overlayBtn = document.getElementById('video-overlay-btn');
+                    if (overlayBtn) overlayBtn.style.display = 'flex';
                 }
-            }
 
-            // Galéria frissítése
-            renderGallery(currentLetter);
+                // Galéria frissítése (nem rombolja le a kártyákat)
+                renderGallery(currentLetter);
+
+                // Fade-in animáció
+                if (coverflowEl) coverflowEl.style.opacity = '1';
+                if (videoEl) videoEl.style.opacity = '1';
+                if (mimicryImg) mimicryImg.style.opacity = '1';
+                
+                // Mivel a renderGallery új imgContent-et rakhatott be, újra lekérjük a frissített elemeket a biztonság kedvéért:
+                const updatedGalleryEls = document.querySelectorAll('.gallery__img-wrap, .gallery__word-title');
+                updatedGalleryEls.forEach(el => el.style.opacity = '1');
+
+            }, 150);
         });
     });
 

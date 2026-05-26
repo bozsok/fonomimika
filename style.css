@@ -362,22 +362,27 @@ body {
 
 /* BEM: learning-hero */
 .learning-hero {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
-  align-items: start;
+}
+
+.learning-hero__top {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .learning-hero__interactive {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  height: 100%;
 }
 
 .learning-hero__media {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  height: 100%;
 }
 
 /* BEM: interactive-card */
@@ -386,30 +391,26 @@ body {
   background-color: #fff;
   border-radius: var(--radius-xl);
   padding: 0;
-  container-type: inline-size; /* Engedélyezzük a container query szélesség mérést */
-  /* Padding eltávolítása a 100%-os magasság pontos illesztéséhez */
-  aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: baseline;
-  /* Ezzel a szöveg tipográfiai alapvonala illeszkedik a flex baseline-hoz */
-  justify-content: center;
+  container-type: inline-size;
+  height: 100%;
+  min-height: 250px;
   border: 2px solid var(--color-primary-container);
-  overflow: hidden;
   box-shadow: 0 10px 30px rgba(255, 217, 102, 0.2);
 }
 
-.interactive-card::before {
-  content: '';
-  display: inline-block;
-  height: 65%;
-  /* Egy 65% magas láthatatlan elem, aminek az alja adja meg a baseline-t */
-  width: 0;
+.house-indicator {
+  position: absolute;
+  top: 0;
+  left: 1.5rem;
+  width: 15rem;
+  height: 100%;
+  z-index: 2;
+  /* Háttér fölött, betűk alatt */
+  pointer-events: none;
 }
 
 .interactive-card--pattern {
-  /* Magyar 4-vonalas füzet (3 sorköz).
-     A kártya magasságának 25%, 45% és 85% magasságában húzunk 3px-es vonalakat, specifikus színekből.
-     A 65%-nál húzódik a 4px-es vastag kék alapvonal. */
+  /* Magyar 4-vonalas füzet (3 sorköz). */
   background-image: linear-gradient(to bottom,
       transparent 25%,
       #cae4eb 25%, #cae4eb calc(25% + 1px),
@@ -435,15 +436,122 @@ body {
       #77a5af calc(85% + 1px), #77a5af calc(85% + 2px),
       #cefaff calc(85% + 2px), #cefaff calc(85% + 3px),
       transparent calc(85% + 3px));
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  /* A háttér sarkait vágja le */
 }
+
+/* Coverflow Scene */
+.coverflow-scene {
+  position: absolute;
+  top: 0;
+  left: calc(15% + 70px);
+  /* Tovább toljuk jobbra */
+  width: calc(85% - 10px);
+  height: 100%;
+  pointer-events: none;
+  /* Átengedi a kattintásokat a kártyára */
+}
+
+.coverflow {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.coverflow__item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  /* Flexbox Baseline Alignment a vonalas papírhoz */
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform, opacity;
+}
+
+.coverflow__item::before {
+  content: '';
+  display: inline-block;
+  height: 65%;
+  width: 0;
+}
+
+/* Coverflow Data Positions */
+.coverflow__item[data-position="active"] {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+  z-index: 10;
+}
+
+.coverflow__item[data-position="next"] {
+  transform: translateX(var(--card-spread, 24%)) translateY(-40px) scale(0.6);
+  opacity: 0.3;
+  z-index: 5;
+}
+
+.coverflow__item[data-position="prev"] {
+  transform: translateX(calc(var(--card-spread, 24%) * -1)) translateY(-40px) scale(0.6);
+  opacity: 0.3;
+  z-index: 5;
+}
+
+.coverflow__item[data-position="hidden"] {
+  transform: translateX(0) scale(0);
+  opacity: 0;
+  z-index: 1;
+}
+
+/* Navigation Arrows */
+.coverflow-nav {
+  position: absolute;
+  bottom: 1.5rem;
+  top: auto;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid var(--color-outline-variant);
+  border-radius: var(--radius-full);
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 15;
+  /* A gombok mindig a betűk felett vannak */
+  color: var(--color-on-surface);
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  pointer-events: auto;
+}
+
+.coverflow-nav:hover {
+  background: white;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: scale(1.05);
+}
+
+.coverflow-nav:active {
+  transform: scale(0.95);
+}
+
+.coverflow-nav--prev {
+  left: 1.5rem;
+}
+
+.coverflow-nav--next {
+  left: 6rem;
+}
+
 
 .interactive-card__letter {
   margin: 0;
-  /* Mivel a kártya aspect-ratio: 1/1, a szélessége egyenlő a magasságával. 
-     A font-size 50cqw (50% kártyaszélesség = 50% kártyamagasság). 
-     Normál (800-as) Ascent esetén az 50cqw font-size pontosan a kártya magasságának 
-     40%-át tölti ki vizuálisan (50 * 0.8), ami PONT 2 sorköz a 4-vonalas füzetben! */
-  font-size: 50cqw;
+  /* Mivel az aspect-ratio 2/1, a szélesség 25%-a (25cqw) pont megegyezik a korábbi magasság 50%-ával (50cqh). Így a konténer sosem esik össze. */
+  font-size: var(--card-font-size, 25cqw);
   line-height: 1;
   color: var(--color-primary);
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
@@ -461,25 +569,7 @@ body {
   font-weight: 400;
 }
 
-.interactive-card__overlay {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 1rem;
-}
 
-.interactive-card__dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: var(--radius-full);
-  background-color: var(--color-primary-container);
-}
-
-.interactive-card__dot--active {
-  background-color: var(--color-primary);
-}
 
 .interactive-card__actions {
   display: flex;
@@ -514,6 +604,18 @@ body {
   font-size: 1.5rem;
 }
 
+.interactive-card__btn--floating {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: auto;
+  padding: 0 1.5rem;
+  height: 4rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 20;
+}
+
 .interactive-card__btn--star {
   width: 5rem;
   flex: none;
@@ -540,6 +642,10 @@ body {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .mimicry-card__badge {
@@ -556,7 +662,7 @@ body {
 }
 
 .mimicry-card__media-wrapper {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 1 / 1;
   background-color: white;
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -816,16 +922,10 @@ body {
 }
 
 @media (min-width: 1280px) {
-  .learning-hero {
-    grid-template-columns: repeat(12, 1fr);
-  }
-
-  .learning-hero__interactive {
-    grid-column: span 6;
-  }
-
-  .learning-hero__media {
-    grid-column: span 6;
+  .learning-hero__top {
+    display: grid;
+    grid-template-columns: 8fr 4fr;
+    align-items: stretch;
   }
 }
 
@@ -834,9 +934,14 @@ body {
    ========================================================================== */
 .login-modal {
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background-color: rgba(240, 238, 233, 0.85); /* Fonomimika surface-hoz illeszkedő, átlátszó háttér */
-  backdrop-filter: blur(6px); /* Elmosódott háttér */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(240, 238, 233, 0.85);
+  /* Fonomimika surface-hoz illeszkedő, átlátszó háttér */
+  backdrop-filter: blur(6px);
+  /* Elmosódott háttér */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -847,8 +952,10 @@ body {
   background-color: #ffffff;
   padding: 3rem;
   border-radius: var(--radius-xl);
-  box-shadow: 0 10px 40px rgba(255, 217, 102, 0.3); /* Vidám sárgás árnyék */
-  border: 4px solid var(--color-primary-container); /* Konzisztens sárga vastag keret */
+  box-shadow: 0 10px 40px rgba(255, 217, 102, 0.3);
+  /* Vidám sárgás árnyék */
+  border: 4px solid var(--color-primary-container);
+  /* Konzisztens sárga vastag keret */
   width: 90%;
   max-width: 480px;
   text-align: center;
@@ -901,10 +1008,12 @@ body {
 
 .autocomplete-list {
   position: absolute;
-  top: 100%; left: 0; right: 0;
+  top: 100%;
+  left: 0;
+  right: 0;
   background-color: #fff;
   border-radius: var(--radius-md);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   max-height: 200px;
   overflow-y: auto;
   z-index: 10;
@@ -952,4 +1061,13 @@ body {
 
 .login-modal__btn:not(:disabled):hover {
   opacity: 0.9;
+}
+
+/* Belső tartalmak gyors fade-animációja (150ms) */
+#letter-coverflow,
+#instructional-video,
+.gallery__img-wrap,
+.gallery__word-title,
+.mimicry-card__image {
+  transition: opacity 0.15s ease-in-out;
 }
