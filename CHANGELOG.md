@@ -21,6 +21,7 @@ Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fono
 - A Galéria (`renderGallery`) logikájának refaktorálása: nem építi újra a kártyákat minden kattintásnál, csak a meglévő dobozokban lévő tartalmat (kép, szó) frissíti.
 - A fő interaktív betűkártya és a Mimicry kártya magasságának szinkronizálása a Grid elrendezésben (a korábbi kötelező `aspect-ratio` kiváltásával mindkét elem megkapta a rugalmas `height: 100%`-ot, így a két kártya alja tökéletesen egy síkba került).
 - Vite Build / Útvonal javítás (Bugfix): Az avatar sprite kép hivatkozásának (relatív/abszolút útvonal ütközés a generált CSS-ben) és a szerveroldali PHP API elérésének stabilizálása, lehetővé téve az almappából (`/fono/`) történő hibátlan futtatást.
+- Ékezetmentes Webes Fájlnév-kezelés (Bugfix): A Linux szerverek 404-es hibáinak (URL-kódolt fájlnevek nem találása) elkerülése végett egy új `getSafeFileName()` szűrő került beépítésre a JS-be. Mostantól a weblap URL-biztos, ékezetmentes fájlneveken (pl. `o_pontos.mp4`, `e_hosszu.mp3`) kéri le az adott betűkhöz tartozó videó- és hangfájlokat, megszüntetve a speciális karakterek okozta letöltési hibákat.
 
 ## [1.2.1] - 2026-05-25
 ### Módosítva

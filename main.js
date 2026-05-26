@@ -43,6 +43,22 @@ function normalizeStr(str) {
     return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
+function getSafeFileName(letter) {
+    const map = {
+        'á': 'a_hosszu',
+        'é': 'e_hosszu',
+        'í': 'i_hosszu',
+        'ó': 'o_hosszu',
+        'ö': 'o_pontos',
+        'ő': 'o_dupla',
+        'ú': 'u_hosszu',
+        'ü': 'u_pontos',
+        'ű': 'u_dupla'
+    };
+    const l = letter.toLowerCase();
+    return map[l] || l;
+}
+
 function initLoginUI() {
     const loginModal = document.getElementById('login-modal');
     const appContent = document.getElementById('app-content');
@@ -451,7 +467,7 @@ if (coverflowEl) {
                 // Videó frissítése
                 if (videoEl) {
                     const videoSource = videoEl.querySelector('source');
-                    videoSource.src = `./assets/video/${currentLetter.toLowerCase()}.mp4`;
+                    videoSource.src = `assets/video/${getSafeFileName(currentLetter)}.mp4`;
                     videoEl.load();
 
                     const overlayBtn = document.getElementById('video-overlay-btn');
@@ -513,7 +529,7 @@ if (coverflowEl) {
                 // Ha épp szól és újra rányom, induljon újra
                 letterAudio.currentTime = 0;
             } else {
-                letterAudio.src = `./assets/sound/${currentLetter.toLowerCase()}.mp3`;
+                letterAudio.src = `assets/sound/${getSafeFileName(currentLetter)}.mp3`;
                 letterAudio.play().catch(e => console.warn("Hanglejátszás hiba:", e));
                 isPlaying = true;
                 pronounceBtn.classList.add('is-playing');
