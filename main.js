@@ -1,30 +1,41 @@
 // Interactive Letter Switcher
-const STORAGE_KEY = 'fonomimika_db_v2';
 let studentDB = null;
 let currentStudent = null;
 
 async function initDatabase() {
     try {
-        // 1. Megpróbáljuk LocalStorage-ból
-        const localData = localStorage.getItem(STORAGE_KEY);
-        if (localData) {
-            studentDB = JSON.parse(localData);
-        }
+        // Fetch a friss students.json a szerverről
+        const response = await fetch('data/students.json');
+        studentDB = await response.json();
         
-        // 2. Fetch a friss students.json (biztos relatív útvonal Vite alatt)
-        const response = await fetch('./data/students.json');
-        const freshData = await response.json();
-        
-        // 3. Ha nincs local vagy eltér a tanév, akkor felülírjuk a freshData-val
-        if (!studentDB || studentDB.academicYear !== freshData.academicYear) {
-            studentDB = freshData;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(studentDB));
-            console.log('Adatbázis inicializálva/frissítve a fájlból.');
-        }
-        
+        console.log('Adatbázis inicializálva a szerverről.');
         initLoginUI();
     } catch (e) {
         console.error('Hiba az adatbázis betöltésekor:', e);
+    }
+}
+
+// PHP API Mentés Függvény (Async)
+async function saveToDatabase() {
+    if (!studentDB) return;
+    
+    try {
+        const response = await fetch('api/save_data.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(studentDB)
+        });
+        
+        const result = await response.json();
+        if (response.ok) {
+            console.log('Sikeres mentés a szerverre!', result);
+        } else {
+            console.error('Szerver hiba mentéskor:', result.error);
+        }
+    } catch (e) {
+        console.error('Hálózati hiba a mentés során:', e);
     }
 }
 
@@ -132,8 +143,8 @@ function generateAvatarSpriteStyles() {
     const smallScale = config.smallBoxSize / cellW;
 
     let styleCSS = `
-    .avatar-sprite { background-size: ${config.imageW * scale}px ${config.imageH * scale}px; }
-    .avatar-sprite-sm { background-image: url('./assets/pics/avatars.png'); background-size: ${config.imageW * smallScale}px ${config.imageH * smallScale}px; background-repeat: no-repeat; width: ${config.smallBoxSize}px; height: ${config.smallBoxSize}px; border-radius: 50%; display: inline-block; background-color: #fff; }
+    .avatar-sprite { background-image: url('assets/pics/avatars.png'); background-size: ${config.imageW * scale}px ${config.imageH * scale}px; }
+    .avatar-sprite-sm { background-image: url('assets/pics/avatars.png'); background-size: ${config.imageW * smallScale}px ${config.imageH * smallScale}px; background-repeat: no-repeat; width: ${config.smallBoxSize}px; height: ${config.smallBoxSize}px; border-radius: 50%; display: inline-block; background-color: #fff; }
     `;
 
     for (let i = 0; i < config.totalAvatars; i++) {
@@ -187,7 +198,8 @@ function saveAvatar(avatarId) {
     const dbIndex = studentDB.students.findIndex(s => s.name === currentStudent.name);
     if (dbIndex !== -1) {
         studentDB.students[dbIndex].avatarId = avatarId;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(studentDB));
+        // Mentés a PHP backendre a LocalStorage helyett
+        saveToDatabase();
     }
     
     document.getElementById('avatar-modal').style.display = 'none';

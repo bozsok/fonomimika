@@ -7,7 +7,8 @@ Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fono
 - **Coverflow Interfész**: A régi, egyszerű betűváltás helyett egy elegáns, Coverflow-stílusú animációs elrendezés (előző és következő halvány betűk beúsztatása).
 - **Betűházikó (SVG)**: A kisiskolás módszertanhoz (betűmagasság magyarázatához) igazodva egy vektoros "házikó" (tető, lakótér, pince lépcső) rajzolódott a 4-vonalas kártya hátterébe, amely pixelpontosan illeszkedik a CSS alapvonalakra.
 - **Kiejtés Hanglejátszó (Audio)**: A betűkártyán található hangszóró ikonra kattintva a program betölti és lejátssza az adott betű hangját (`.mp3`). Lejátszás alatt a gomb interaktívan, pulzáló animációval jelez vissza. Újbóli kattintásra a hang azonnal újraindul a zavaró hangátfedések elkerülése végett.
-- **Avatar Kiválasztó Rendszer (CSS Sprite + LocalStorage)**: Bevezetésre került egy tanulói avatar választó, amely induláskor felugrik, ha a diák profiljához még nem tartozik figura. A rendszer egy intelligens JS-generátor által vezérelt CSS Sprite-tal jeleníti meg a 40 avatart (így egyetlen képletöltéssel és nulla villogással működik). A kiválasztott avatar bekerül a fejlécbe és a LocalStorage-be (JSON olvasási fallback-el).
+- **Avatar Kiválasztó Rendszer (CSS Sprite)**: Bevezetésre került egy tanulói avatar választó, amely induláskor felugrik, ha a diák profiljához még nem tartozik figura. A rendszer egy intelligens JS-generátor által vezérelt CSS Sprite-tal jeleníti meg a 40 avatart (így egyetlen képletöltéssel és nulla villogással működik). A kiválasztott avatar bekerül a fejlécbe és az adatbázisba.
+- **PHP Backend Adatmentés (Architektúra váltás)**: A korábbi, böngésző-specifikus `LocalStorage` mentést felváltotta egy robusztus "Felhő" megoldás! Létrejött a `public/api/save_data.php` script, így a kliensoldali JavaScript közvetlenül a szerveren lévő `students.json` fájlt írja felül. Ezáltal a diákok haladása és beállításai platformfüggetlenül (bármilyen eszközről elérve) ugyanazok maradnak.
 
 ### Módosítva
 - A Tanulási hős-szekció (Layout) átrendezése: az alsó videó teljes szélességet kapott, az interaktív betűkártya (stabil, 2:1 képaránnyal és 15rem széles házikóval) és a mimicry kártya egymás mellé kerültek a felső sorba.
@@ -19,6 +20,7 @@ Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fono
 - Sima, villámgyors tartalomváltás (Cross-fade érzet) bevezetése: betűkattintáskor a UI konténerek fixek maradnak, és kizárólag a képek/szövegek halványulnak el, majd azonnal az új tartalom jelenik meg.
 - A Galéria (`renderGallery`) logikájának refaktorálása: nem építi újra a kártyákat minden kattintásnál, csak a meglévő dobozokban lévő tartalmat (kép, szó) frissíti.
 - A fő interaktív betűkártya és a Mimicry kártya magasságának szinkronizálása a Grid elrendezésben (a korábbi kötelező `aspect-ratio` kiváltásával mindkét elem megkapta a rugalmas `height: 100%`-ot, így a két kártya alja tökéletesen egy síkba került).
+- Vite Build / Útvonal javítás (Bugfix): Az avatar sprite kép hivatkozásának (relatív/abszolút útvonal ütközés a generált CSS-ben) és a szerveroldali PHP API elérésének stabilizálása, lehetővé téve az almappából (`/fono/`) történő hibátlan futtatást.
 
 ## [1.2.1] - 2026-05-25
 ### Módosítva

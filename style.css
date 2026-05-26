@@ -1008,9 +1008,8 @@ body {
 }
 
 .avatar-sprite {
-  background-image: url('./assets/pics/avatars.png');
   background-repeat: no-repeat;
-  /* A JS generátor számolja ki a background-position-t és size-ot */
+  /* A JS generátor számolja ki a background-position-t, size-ot és image-t */
 }
 
 .login-modal__title {
