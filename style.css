@@ -129,7 +129,13 @@ body {
   border-radius: 0;
 }
 
-.app-header__nav-item:not(.app-header__nav-item--active):hover {
+.app-header__nav-item--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.app-header__nav-item:not(.app-header__nav-item--active):not(.app-header__nav-item--disabled):hover {
   background-color: rgba(255, 217, 102, 0.2);
 }
 
@@ -511,8 +517,9 @@ body {
   position: absolute;
   bottom: 1.5rem;
   top: auto;
-  background: rgba(255, 255, 255, 0.8);
-  border: 2px solid var(--color-outline-variant);
+  background: #fff3cd;
+  /* Enyhe pasztell sárga */
+  border: 2px solid var(--color-primary-container);
   border-radius: var(--radius-full);
   width: 3.5rem;
   height: 3.5rem;
@@ -529,7 +536,7 @@ body {
 }
 
 .coverflow-nav:hover {
-  background: white;
+  background: var(--color-primary-container);
   border-color: var(--color-primary);
   color: var(--color-primary);
   transform: scale(1.05);
@@ -616,12 +623,77 @@ body {
   z-index: 20;
 }
 
+.help-tooltip-container {
+  position: relative;
+  display: block;
+}
+
 .interactive-card__btn--star {
   width: 5rem;
   flex: none;
   background-color: var(--color-secondary-container);
   color: var(--color-on-secondary-container);
   border-color: var(--color-secondary);
+}
+
+.help-tooltip {
+  position: absolute;
+  bottom: calc(100% + 1rem);
+  left: 0;
+  width: 420px;
+  background: white;
+  border: 4px solid var(--color-primary-container);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  z-index: 100;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: auto;
+  cursor: default;
+}
+
+.help-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 3rem;
+  border-width: 10px;
+  border-style: solid;
+  border-color: var(--color-primary-container) transparent transparent transparent;
+}
+
+.help-tooltip--show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.help-tooltip__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--color-on-surface-variant);
+  cursor: pointer;
+}
+
+.help-tooltip__close:hover {
+  color: var(--color-error, #ba1a1a);
+}
+
+.help-tooltip__content {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--color-on-surface);
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  margin-top: 1rem;
 }
 
 .interactive-card__icon-bounce {
@@ -634,9 +706,17 @@ body {
 }
 
 @keyframes audio-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(71, 143, 172, 0.6); }
-  70% { box-shadow: 0 0 0 15px rgba(71, 143, 172, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(71, 143, 172, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(71, 143, 172, 0.6);
+  }
+
+  70% {
+    box-shadow: 0 0 0 15px rgba(71, 143, 172, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(71, 143, 172, 0);
+  }
 }
 
 .interactive-card__btn--pronounce.is-playing {
@@ -1012,14 +1092,14 @@ body {
   border: 3px solid var(--color-outline-variant);
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: inline-block;
 }
 
 .avatar-option:hover {
   transform: scale(1.1);
   border-color: var(--color-primary);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .avatar-sprite {

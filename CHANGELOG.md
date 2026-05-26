@@ -2,9 +2,20 @@
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
 
+## [1.3.2] - 2026-05-26
+### Hozzáadva
+- **Súgó (Tooltip) Rendszer**: Feloldásra került az oldalsáv alján található eredeti "Súgó" gomb. Rákattintva egy új, elegáns felugró ablak (tooltip) jelenik meg közvetlenül felette, amely az aktuális betű fonomimikai instrukcióit tartalmazza (bezárható x-el vagy háttérkattintással). Az adatokat a külső `hints.json` fájlból tölti be a program.
+
+### Módosítva
+- **Helyesírási Frissítés (MTA 12.)**: A JavaScript fájlban lévő galéria adatbázis (`galleryData`) szavai kisbetűsítve lettek (pl. "Alma" -> "alma"), mivel ezek köznevek, és a magyar nyelvtan szabályainak így felelnek meg.
+
 ## [1.3.1] - 2026-05-26
 ### Hozzáadva
 - **Avatar Modal Extrák**: Beépítésre került a modálba a bezáró ("X") gomb, valamint a háttérre kattintásos bezárás is aktiválódott. Helyet kapott egy "Nincs" gomb az avatar választó legelején, amellyel a felhasználó eltávolíthatja (visszavonhatja) az aktuális avatart, visszakapva a klasszikus profil ikont.
+
+### Módosítva
+- **Pasztell Navigáció**: A kártya lapozógombjai (jobb/bal nyilak) az eddigi nyers fehér/szürke helyett egy harmonikus, pasztell-sárga árnyalatot kaptak, interaktív (hover) élénkebb peremmel.
+- **Inaktív Menüpontok**: A "Gyakorlás" és a "Haladás" menüpontok vizuálisan és funkcionálisan is inaktívvá (halvánnyá és kattinthatatlanná) lettek téve a fejlécben, amíg a hozzájuk tartozó fejlesztések el nem készülnek.
 
 ## [1.3.0] - 2026-05-25
 ### Hozzáadva

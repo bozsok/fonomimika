@@ -1,6 +1,16 @@
 // Interactive Letter Switcher
 let studentDB = null;
 let currentStudent = null;
+let hintsDB = {};
+
+async function initHints() {
+    try {
+        const response = await fetch('data/hints.json');
+        hintsDB = await response.json();
+    } catch (e) {
+        console.error('Hiba a súgó fájl betöltésekor:', e);
+    }
+}
 
 async function initDatabase() {
     try {
@@ -288,6 +298,7 @@ function updateUserAvatarUI() {
 
 // Indítás
 initDatabase();
+initHints();
 initAvatarModal();
 const coverflowEl = document.getElementById('letter-coverflow');
 
@@ -364,50 +375,50 @@ if (coverflowEl) {
 
     // Adatbázis a galériához minden betűre
     const galleryData = {
-        'A': [{ word: 'Alma', img: '' }, { word: 'Autó', img: '' }, { word: 'Asztal', img: '' }],
-        'Á': [{ word: 'Ágy', img: '' }, { word: 'Állat', img: '' }, { word: 'Ásó', img: '' }],
-        'B': [{ word: 'Baba', img: '' }, { word: 'Béka', img: '' }, { word: 'Bálna', img: '' }],
-        'C': [{ word: 'Cápa', img: './assets/pics/capa.jpg' }, { word: 'Cumi', img: './assets/pics/cumi.jpg' }, { word: 'Cékla', img: './assets/pics/cekla.jpg' }],
-        'CS': [{ word: 'Csiga', img: '' }, { word: 'Csillag', img: '' }, { word: 'Csizma', img: '' }],
-        'D': [{ word: 'Dob', img: '' }, { word: 'Dinnye', img: '' }, { word: 'Dió', img: '' }],
-        'DZ': [{ word: 'Edző', img: '' }, { word: 'Bodza', img: '' }, { word: 'Madzag', img: '' }],
-        'DZS': [{ word: 'Dzsungel', img: '' }, { word: 'Dzsip', img: '' }, { word: 'Dzsinn', img: '' }],
-        'E': [{ word: 'Egér', img: '' }, { word: 'Eper', img: '' }, { word: 'Elefánt', img: '' }],
-        'É': [{ word: 'Érem', img: '' }, { word: 'Épület', img: '' }, { word: 'Ének', img: '' }],
-        'F': [{ word: 'Fa', img: '' }, { word: 'Fóka', img: '' }, { word: 'Fecske', img: '' }],
-        'G': [{ word: 'Gomba', img: '' }, { word: 'Golyó', img: '' }, { word: 'Gép', img: '' }],
-        'GY': [{ word: 'Gyertya', img: '' }, { word: 'Gyűrű', img: '' }, { word: 'Gyerek', img: '' }],
-        'H': [{ word: 'Ház', img: '' }, { word: 'Hajó', img: '' }, { word: 'Híd', img: '' }],
-        'I': [{ word: 'Ing', img: '' }, { word: 'Iroda', img: '' }, { word: 'Iskola', img: '' }],
-        'Í': [{ word: 'Íj', img: '' }, { word: 'Író', img: '' }, { word: 'Írás', img: '' }],
-        'J': [{ word: 'Játék', img: '' }, { word: 'Juh', img: '' }, { word: 'Jég', img: '' }],
-        'K': [{ word: 'Kutya', img: '' }, { word: 'Könyv', img: '' }, { word: 'Kapa', img: '' }],
-        'L': [{ word: 'Ló', img: '' }, { word: 'Labda', img: '' }, { word: 'Lámpa', img: '' }],
-        'LY': [{ word: 'Lyuk', img: '' }, { word: 'Bagoly', img: '' }, { word: 'Osztály', img: '' }],
-        'M': [{ word: 'Maci', img: '' }, { word: 'Madár', img: '' }, { word: 'Macska', img: '' }],
-        'N': [{ word: 'Nap', img: '' }, { word: 'Nadrág', img: '' }, { word: 'Nád', img: '' }],
-        'NY': [{ word: 'Nyuszi', img: '' }, { word: 'Nyak', img: '' }, { word: 'Nyelv', img: '' }],
-        'O': [{ word: 'Olló', img: '' }, { word: 'Orvos', img: '' }, { word: 'Oroszlán', img: '' }],
-        'Ó': [{ word: 'Óra', img: '' }, { word: 'Óvoda', img: '' }, { word: 'Óriás', img: '' }],
-        'Ö': [{ word: 'Öv', img: '' }, { word: 'Ökör', img: '' }, { word: 'Ördög', img: '' }],
-        'Ő': [{ word: 'Őz', img: '' }, { word: 'Őr', img: '' }, { word: 'Ősz', img: '' }],
-        'P': [{ word: 'Pók', img: '' }, { word: 'Pék', img: '' }, { word: 'Pénz', img: '' }],
-        'Q': [{ word: 'Quad', img: '' }, { word: 'Quiz', img: '' }, { word: 'Quinoa', img: '' }],
-        'R': [{ word: 'Róka', img: '' }, { word: 'Répa', img: '' }, { word: 'Rák', img: '' }],
-        'S': [{ word: 'Sajt', img: '' }, { word: 'Sárkány', img: '' }, { word: 'Só', img: '' }],
-        'SZ': [{ word: 'Szem', img: '' }, { word: 'Szánkó', img: '' }, { word: 'Szék', img: '' }],
-        'T': [{ word: 'Tej', img: '' }, { word: 'Torta', img: '' }, { word: 'Tégla', img: '' }],
-        'TY': [{ word: 'Tyúk', img: '' }, { word: 'Pötty', img: '' }, { word: 'Korty', img: '' }],
-        'U': [{ word: 'Ujj', img: '' }, { word: 'Utca', img: '' }, { word: 'Ugatás', img: '' }],
-        'Ú': [{ word: 'Út', img: '' }, { word: 'Újság', img: '' }, { word: 'Úszás', img: '' }],
-        'Ü': [{ word: 'Üveg', img: '' }, { word: 'Ünnep', img: '' }, { word: 'Üst', img: '' }],
-        'Ű': [{ word: 'Űrhajó', img: '' }, { word: 'Űrlény', img: '' }, { word: 'Zűr', img: '' }],
-        'V': [{ word: 'Vonat', img: '' }, { word: 'Vödör', img: '' }, { word: 'Vár', img: '' }],
-        'W': [{ word: 'Web', img: '' }, { word: 'Wifi', img: '' }, { word: 'Walkie-talkie', img: '' }],
-        'X': [{ word: 'Xilofon', img: '' }, { word: 'Xerox', img: '' }, { word: 'Taxi', img: '' }],
-        'Y': [{ word: 'Yeti', img: '' }, { word: 'Yorki', img: '' }, { word: 'Gally', img: '' }],
-        'Z': [{ word: 'Zebra', img: '' }, { word: 'Zászló', img: '' }, { word: 'Zongora', img: '' }],
-        'ZS': [{ word: 'Zsiráf', img: '' }, { word: 'Zsák', img: '' }, { word: 'Zsemle', img: '' }]
+        'A': [{ word: 'alma', img: '' }, { word: 'autó', img: '' }, { word: 'asztal', img: '' }],
+        'Á': [{ word: 'ágy', img: '' }, { word: 'állat', img: '' }, { word: 'ásó', img: '' }],
+        'B': [{ word: 'baba', img: '' }, { word: 'béka', img: '' }, { word: 'bálna', img: '' }],
+        'C': [{ word: 'cápa', img: './assets/pics/capa.jpg' }, { word: 'cumi', img: './assets/pics/cumi.jpg' }, { word: 'cékla', img: './assets/pics/cekla.jpg' }],
+        'CS': [{ word: 'csiga', img: '' }, { word: 'csillag', img: '' }, { word: 'csizma', img: '' }],
+        'D': [{ word: 'dob', img: '' }, { word: 'dinnye', img: '' }, { word: 'dió', img: '' }],
+        'DZ': [{ word: 'edző', img: '' }, { word: 'bodza', img: '' }, { word: 'madzag', img: '' }],
+        'DZS': [{ word: 'dzsungel', img: '' }, { word: 'dzsip', img: '' }, { word: 'dzsinn', img: '' }],
+        'E': [{ word: 'egér', img: '' }, { word: 'eper', img: '' }, { word: 'elefánt', img: '' }],
+        'É': [{ word: 'érem', img: '' }, { word: 'épület', img: '' }, { word: 'ének', img: '' }],
+        'F': [{ word: 'fa', img: '' }, { word: 'fóka', img: '' }, { word: 'fecske', img: '' }],
+        'G': [{ word: 'gomba', img: '' }, { word: 'golyó', img: '' }, { word: 'gép', img: '' }],
+        'GY': [{ word: 'gyertya', img: '' }, { word: 'gyűrű', img: '' }, { word: 'gyerek', img: '' }],
+        'H': [{ word: 'ház', img: '' }, { word: 'hajó', img: '' }, { word: 'híd', img: '' }],
+        'I': [{ word: 'ing', img: '' }, { word: 'iroda', img: '' }, { word: 'iskola', img: '' }],
+        'Í': [{ word: 'íj', img: '' }, { word: 'író', img: '' }, { word: 'írás', img: '' }],
+        'J': [{ word: 'játék', img: '' }, { word: 'juh', img: '' }, { word: 'jég', img: '' }],
+        'K': [{ word: 'kutya', img: '' }, { word: 'könyv', img: '' }, { word: 'kapa', img: '' }],
+        'L': [{ word: 'ló', img: '' }, { word: 'labda', img: '' }, { word: 'lámpa', img: '' }],
+        'LY': [{ word: 'lyuk', img: '' }, { word: 'bagoly', img: '' }, { word: 'osztály', img: '' }],
+        'M': [{ word: 'maci', img: '' }, { word: 'madár', img: '' }, { word: 'macska', img: '' }],
+        'N': [{ word: 'nap', img: '' }, { word: 'nadrág', img: '' }, { word: 'nád', img: '' }],
+        'NY': [{ word: 'nyuszi', img: '' }, { word: 'nyak', img: '' }, { word: 'nyelv', img: '' }],
+        'O': [{ word: 'olló', img: '' }, { word: 'orvos', img: '' }, { word: 'oroszlán', img: '' }],
+        'Ó': [{ word: 'óra', img: '' }, { word: 'óvoda', img: '' }, { word: 'óriás', img: '' }],
+        'Ö': [{ word: 'öv', img: '' }, { word: 'ökör', img: '' }, { word: 'ördög', img: '' }],
+        'Ő': [{ word: 'őz', img: '' }, { word: 'őr', img: '' }, { word: 'ősz', img: '' }],
+        'P': [{ word: 'pók', img: '' }, { word: 'pék', img: '' }, { word: 'pénz', img: '' }],
+        'Q': [{ word: 'quad', img: '' }, { word: 'quiz', img: '' }, { word: 'quinoa', img: '' }],
+        'R': [{ word: 'róka', img: '' }, { word: 'répa', img: '' }, { word: 'rák', img: '' }],
+        'S': [{ word: 'sajt', img: '' }, { word: 'sárkány', img: '' }, { word: 'só', img: '' }],
+        'SZ': [{ word: 'szem', img: '' }, { word: 'szánkó', img: '' }, { word: 'szék', img: '' }],
+        'T': [{ word: 'tej', img: '' }, { word: 'torta', img: '' }, { word: 'tégla', img: '' }],
+        'TY': [{ word: 'tyúk', img: '' }, { word: 'pötty', img: '' }, { word: 'korty', img: '' }],
+        'U': [{ word: 'ujj', img: '' }, { word: 'utca', img: '' }, { word: 'ugatás', img: '' }],
+        'Ú': [{ word: 'út', img: '' }, { word: 'újság', img: '' }, { word: 'úszás', img: '' }],
+        'Ü': [{ word: 'üveg', img: '' }, { word: 'ünnep', img: '' }, { word: 'üst', img: '' }],
+        'Ű': [{ word: 'űrhajó', img: '' }, { word: 'űrlény', img: '' }, { word: 'zűr', img: '' }],
+        'V': [{ word: 'vonat', img: '' }, { word: 'vödör', img: '' }, { word: 'vár', img: '' }],
+        'W': [{ word: 'web', img: '' }, { word: 'wifi', img: '' }, { word: 'walkie-talkie', img: '' }],
+        'X': [{ word: 'xilofon', img: '' }, { word: 'xerox', img: '' }, { word: 'taxi', img: '' }],
+        'Y': [{ word: 'yeti', img: '' }, { word: 'yorki', img: '' }, { word: 'gally', img: '' }],
+        'Z': [{ word: 'zebra', img: '' }, { word: 'zászló', img: '' }, { word: 'zongora', img: '' }],
+        'ZS': [{ word: 'zsiráf', img: '' }, { word: 'zsák', img: '' }, { word: 'zsemle', img: '' }]
     };
 
     function renderGallery(letter) {
@@ -582,6 +593,54 @@ if (coverflowEl) {
         letterAudio.addEventListener('error', () => {
             isPlaying = false;
             pronounceBtn.classList.remove('is-playing');
+        });
+    }
+
+    // --- Súgó Tooltip Vezérlés ---
+    const helpBtn = document.getElementById('btn-help');
+    const helpTooltip = document.getElementById('help-tooltip');
+    const helpCloseBtn = document.getElementById('help-tooltip-close');
+    const helpContent = document.getElementById('help-tooltip-content');
+
+    if (helpBtn && helpTooltip) {
+        function showHelp() {
+            const letter = currentLetter.toLowerCase();
+            const hintText = hintsDB[letter] || "Hamarosan érkezik a fonomimikai leírás ehhez a betűhöz is!";
+            
+            helpContent.innerHTML = hintText.replace(/\n/g, '<br><br>');
+            helpTooltip.style.display = 'block';
+            
+            // Késleltetés az animációhoz
+            setTimeout(() => {
+                helpTooltip.classList.add('help-tooltip--show');
+            }, 10);
+        }
+
+        function hideHelp() {
+            helpTooltip.classList.remove('help-tooltip--show');
+            setTimeout(() => {
+                helpTooltip.style.display = 'none';
+            }, 300);
+        }
+
+        helpBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Ne záródjon be egyből a document click miatt
+            if (helpTooltip.classList.contains('help-tooltip--show')) {
+                hideHelp();
+            } else {
+                showHelp();
+            }
+        });
+
+        helpCloseBtn.addEventListener('click', hideHelp);
+
+        // Kattintás a dokumentumon kívülre bezárja a tooltipet
+        document.addEventListener('click', (e) => {
+            if (helpTooltip.classList.contains('help-tooltip--show')) {
+                if (!helpTooltip.contains(e.target) && e.target !== helpBtn) {
+                    hideHelp();
+                }
+            }
         });
     }
 }
