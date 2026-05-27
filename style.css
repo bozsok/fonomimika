@@ -568,12 +568,44 @@ body {
 
 .interactive-card__letter--print {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 500;
+  font-weight: 300;
 }
 
 .interactive-card__letter--script {
   font-family: 'FonomimikaScript';
   font-weight: 400;
+}
+
+/* KIZÁRÓLAG a nyomtatott nagybetű (face-0) felnagyítása az alapvonalon tartva */
+#face-0 {
+  font-size: 30.5cqw;
+  /* Ezt az értéket tudod növelni/csökkenteni, hogy 2 sor magas legyen! */
+}
+
+/* Ha többjegyű a nyomtatott betű (Pl. "Cs"), a kisbetű részt visszahúzzuk az 1 soros (face-1) méretre! */
+#face-0 .print-small {
+  font-size: 20.5cqw;
+  /* Ugyanazt az értéket használd itt is, amit a face-1-nél beállítottál az 1 sorhoz! */
+  font-weight: 400;
+  /* Arany középút a 500 és 700 között */
+}
+
+/* Szükség esetén a nyomtatott nagybetű alapvonalának korrekciója */
+#face-0::before {
+  height: 65.5%;
+  /* Ha a nagyítás miatt elcsúszik a kék vonalról, növeld ezt (pl. 70%) */
+}
+
+/* KIZÁRÓLAG a nyomtatott kisbetű (face-1) méretezése a lakótérbe (1 sor) */
+#face-1 {
+  font-size: 20.5cqw;
+  /* Ezt csökkentsd, amíg a kisbetű bele nem fér az 1 soros lakótérbe! */
+  font-weight: 400;
+}
+
+#face-1::before {
+  height: 65.5%;
+  /* Alapvonal korrekció, ha kell */
 }
 
 /* KIZÁRÓLAG az írott nagybetű (face-2) felnagyítása az alapvonalon tartva */

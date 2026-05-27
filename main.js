@@ -313,9 +313,19 @@ if (coverflowEl) {
         const face3 = document.getElementById('face-3');
         
         if (face0 && face1 && face2 && face3) {
-            face0.innerText = letter.toUpperCase();
+            // Konzisztens, nyelvtanilag helyes adatok minden kártyaoldalon (Pl. 'Cs', 'Dzs')
+            // Nyomtatott kártya: Ha többjegyű betű (pl. Cs), akkor az 's'-t külön span-be tesszük,
+            // hogy függetlenül lehessen méretezni (1 sor magasságra).
+            if (letter.length > 1) {
+                const firstChar = letter.charAt(0);
+                const restChars = letter.slice(1).toLowerCase();
+                face0.innerHTML = `<span>${firstChar}</span><span class="print-small">${restChars}</span>`;
+            } else {
+                face0.innerText = letter;
+            }
+            
             face1.innerText = letter.toLowerCase();
-            face2.innerText = letter.toUpperCase();
+            face2.innerText = letter; // Írottnál marad a text, mert a FontForge rajzolja egybe!
             face3.innerText = letter.toLowerCase();
         }
 
@@ -428,7 +438,8 @@ if (coverflowEl) {
         if (!titleEl || !gridEl) return;
 
         const upperLetter = letter.toUpperCase();
-        titleEl.innerText = `${upperLetter} betűs szavak`;
+        // A galéria címében is a helyes, magyar formátum (pl. "Cs betűs szavak") jelenjen meg
+        titleEl.innerText = `${letter} betűs szavak`;
 
         const items = galleryData[upperLetter];
 
