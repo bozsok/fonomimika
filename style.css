@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'FonomimikaScript';
-  src: url('/assets/fonts/Untitled2.woff') format('woff');
+  src: url('/assets/fonts/Untitled1.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -576,6 +576,19 @@ body {
   font-weight: 400;
 }
 
+/* KIZÁRÓLAG az írott nagybetű (face-2) felnagyítása az alapvonalon tartva */
+#face-2 {
+  font-size: 56cqw;
+  /* Kényszerítjük a böngészőt a ligatúrák (GSUB) használatára */
+  font-variant-ligatures: common-ligatures;
+  /* Ezt az értéket tudod növelni/csökkenteni a mérethez! */
+}
+
+/* Az írott nagybetű (face-2) lejjebb tolása a kék vonalra */
+#face-2::before {
+  /* Alapból ez a kártyáknál 65%. Ha növeled ezt a számot, a betű lejjebb csúszik. */
+  height: 85%;
+}
 
 
 .interactive-card__actions {

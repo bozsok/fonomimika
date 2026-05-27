@@ -2,6 +2,14 @@
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
 
+## [1.3.3] - 2026-05-27
+### Hozzáadva
+- **Fejlesztői Környezet (Vite Proxy)**: Beépítésre került a `vite.config.js` fájlba egy proxy beállítás, amely a fejlesztői kéréseket (API és adatok) a helyi környezetből átirányítja az éles szerverre. Ezzel feleslegessé vált a folyamatos buildelés és feltöltés, lehetővé téve a zavartalan localhost-os fejlesztést és mentést.
+- **Ligatúrák Biztosítása**: CSS szintű kényszerítés (`font-variant-ligatures: common-ligatures;`) került bevezetésre az írott nagybetűknél a többjegyű magyar betűk (pl. Cs, Dzs) megbízható egybekapcsolt megjelenítése érdekében.
+
+### Módosítva
+- **Írott Betűk Méretezése és Alapvonala**: Az újonnan bekerült írott nagybetűk (`#face-2`) CSS-ből történő pontos méretezése (56cqw) és alapvonalra illesztése. A kártyákon látható "kék alapvonalhoz" való tökéletes igazítást a `::before` pszeudo-elem magasságának 85%-ra növelésével értük el.
+- **Saját Betűkészlet (FonomimikaScript) Frissítése**: A többjegyű magyar betűk ligatúráinak OpenType logikája (GSUB) egyetlen közös táblázatba lett szervezve a FontForge-ban, elkerülve a Coverage Overlap hibát, és javításra kerültek az önmetsző (Self Intersecting) vektorok.
 ## [1.3.2] - 2026-05-26
 ### Hozzáadva
 - **Súgó (Tooltip) Rendszer**: Feloldásra került az oldalsáv alján található eredeti "Súgó" gomb. Rákattintva egy új, elegáns felugró ablak (tooltip) jelenik meg közvetlenül felette, amely az aktuális betű fonomimikai instrukcióit tartalmazza (bezárható x-el vagy háttérkattintással). Az adatokat a külső `hints.json` fájlból tölti be a program.
