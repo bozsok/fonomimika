@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'FonomimikaScript';
-  src: url('/assets/fonts/Untitled1.woff') format('woff');
+  src: url('/assets/fonts/magyar_irott_betuk.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -496,13 +496,13 @@ body {
 
 .coverflow__item[data-position="next"] {
   transform: translateX(var(--card-spread, 24%)) translateY(-40px) scale(0.6);
-  opacity: 0.3;
+  opacity: 0.1;
   z-index: 5;
 }
 
 .coverflow__item[data-position="prev"] {
   transform: translateX(calc(var(--card-spread, 24%) * -1)) translateY(-40px) scale(0.6);
-  opacity: 0.3;
+  opacity: 0.1;
   z-index: 5;
 }
 
@@ -620,6 +620,28 @@ body {
 #face-2::before {
   /* Alapból ez a kártyáknál 65%. Ha növeled ezt a számot, a betű lejjebb csúszik. */
   height: 85%;
+}
+
+/* =========================================================
+   ÍROTT KISBETŰ (#face-3) BEÁLLÍTÁSAI
+   Ezzel tudod a frissen elkészített kisbetűket méretezni!
+   ========================================================= */
+
+/* KIZÁRÓLAG az írott kisbetű (face-3) méretezése */
+#face-3 {
+  /* 
+   Ez az érték felel a méretért. Valószínűleg kisebb kell legyen, 
+   mint a nagybetű (56cqw), hogy 1 sorközös magasságú legyen. 
+  */
+  font-size: 55cqw;
+  font-variant-ligatures: common-ligatures;
+}
+
+/* Az írott kisbetű (face-3) alapvonal-igazítása a kék vonalhoz */
+#face-3::before {
+  /* Ezt ugyanúgy állíthatod (pl. 65% és 85% között), amíg a betű 
+     pontosan rá nem ül a vastag kék alapvonalra! */
+  height: 84%;
 }
 
 
