@@ -1,6 +1,14 @@
 # Changelog
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
+## [1.3.4] - 2026-05-28
+### Hozzáadva
+- **Dinamikus mimicryképek**: A program mostantól a kiválasztott betűhöz tartozó egyedi fonomimikai fotókat (`assets/pics/betuk/`) is betölti. A betöltés a korábban bevezetett `getSafeFileName()` szűrőn keresztül történik, így garantálva az URL-biztos, ékezetmentes hivatkozást.
+- **Vektoros képhelyőrző (fallback)**: Amennyiben egy betűhöz még nem tartozik feltöltött kép a szerveren (404-es hiba), a rendszer egy elegáns, beépített SVG-helyőrzővel (placeholderrel) helyettesíti azt, megelőzve az üres vagy hibásan betöltődő kártyák megjelenését.
+
+### Módosítva
+- **Mimicry-kártya hover-animációja**: A `style.css`-ben fellépő "cascading" felülírási hiba javítása (ahol a globális opacitás-animáció megakadályozta a transform-animációt). A kártya nagyítása sima, 0.3 másodperces átmenetet kapott, a nagyítás mértékét pedig 105%-ról 110%-ra növeltük a látványosabb interakció érdekében.
+
 
 ## [1.3.3] - 2026-05-27
 ### Hozzáadva

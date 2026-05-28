@@ -815,11 +815,12 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s;
+  /* Fontos: az opacity a JS fade-in miatt kell, a transform a hover miatt! */
+  transition: transform 0.3s ease, opacity 0.15s ease-in-out;
 }
 
 .mimicry-card:hover .mimicry-card__image {
-  transform: scale(1.05);
+  transform: scale(1.10);
 }
 
 .mimicry-card__text {
@@ -1258,7 +1259,6 @@ body {
 #letter-coverflow,
 #instructional-video,
 .gallery__img-wrap,
-.gallery__word-title,
-.mimicry-card__image {
+.gallery__word-title {
   transition: opacity 0.15s ease-in-out;
 }
