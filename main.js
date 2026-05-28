@@ -17,7 +17,7 @@ async function initDatabase() {
         // Fetch a friss students.json a szerverről
         const response = await fetch('data/students.json');
         studentDB = await response.json();
-        
+
         console.log('Adatbázis inicializálva a szerverről.');
         initLoginUI();
     } catch (e) {
@@ -28,7 +28,7 @@ async function initDatabase() {
 // PHP API Mentés Függvény (Async)
 async function saveToDatabase() {
     if (!studentDB) return;
-    
+
     try {
         const response = await fetch('api/save_data.php', {
             method: 'POST',
@@ -37,7 +37,7 @@ async function saveToDatabase() {
             },
             body: JSON.stringify(studentDB)
         });
-        
+
         const result = await response.json();
         if (response.ok) {
             console.log('Sikeres mentés a szerverre!', result);
@@ -69,6 +69,42 @@ function getSafeFileName(letter) {
     return map[l] || l;
 }
 
+function getMimicryText(letter) {
+    if (!hintsDB) return 'a fonomimikai mozdulat';
+    const lowerL = letter.toLowerCase();
+
+    // Egyedi felülírások (speciális betűk)
+    const overrides = {
+        'q': 'fordított p betű',
+        'w': 'w betű alakja',
+        'x': 'x betű alakja',
+        'y': 'y betű alakja',
+        'gy': 'lovaskocsin gyeplőhúzás',
+        'j': 'kurjantás',
+        'ty': 'álló traktor motorhangja'
+    };
+    if (overrides[lowerL]) {
+        return overrides[lowerL];
+    }
+
+    const hintText = hintsDB[lowerL];
+    if (!hintText) return 'a fonomimikai mozdulat';
+
+    const firstSentence = hintText.split('\n')[0];
+
+    // Kinyerjük a hívószót a névelők eltávolításával.
+    // Nem vágunk vesszőnél, hogy a halmozott jelzők (pl. "éhes, korgó pocakú medve") megmaradjanak,
+    // csak az "aki", "mely" tagmondatoknál, vagy a mondat végén (pont).
+    const match = firstSentence.match(/hívó(?:szavunk|képünk)\s+(?:az\s+|a\s+|egy\s+)?(.*?)(?:\s*,?\s*aki|\s*,?\s*mely|\.|$)/i);
+
+    if (match && match[1]) {
+        let text = match[1].trim();
+        return text.toLowerCase(); // Minden kisbetűs, idézőjel nélkül
+    }
+
+    return 'a fonomimikai mozdulat';
+}
+
 function initLoginUI() {
     const loginModal = document.getElementById('login-modal');
     const appContent = document.getElementById('app-content');
@@ -76,7 +112,7 @@ function initLoginUI() {
     const autocompleteList = document.getElementById('autocomplete-list');
     const loginBtn = document.getElementById('login-btn');
     const sidebarUserInfo = document.getElementById('sidebar-user-info');
-    
+
     let selectedStudent = null;
 
     searchInput.addEventListener('input', (e) => {
@@ -93,14 +129,14 @@ function initLoginUI() {
         // Bolondbiztos szűrés: ha a DB még null, vagy nincs students, ne csináljon semmit
         const studentList = studentDB?.students || [];
         const matches = studentList.filter(s => typeof s.name === 'string' && normalizeStr(s.name).includes(val));
-        
+
         if (matches.length > 0) {
             autocompleteList.style.display = 'block';
             matches.forEach(student => {
                 const item = document.createElement('div');
                 item.className = 'autocomplete-list__item';
                 item.innerHTML = `<div class="autocomplete-list__item-name">${student.name}</div><div class="autocomplete-list__item-class">${student.class}</div>`;
-                
+
                 item.addEventListener('click', () => {
                     searchInput.value = student.name;
                     selectedStudent = student;
@@ -123,7 +159,7 @@ function initLoginUI() {
     loginBtn.addEventListener('click', () => {
         if (selectedStudent) {
             currentStudent = selectedStudent;
-            
+
             // Re-read avatarId from JSON fallback if needed
             const dbIndex = studentDB?.students?.findIndex(s => s.name === currentStudent.name);
             if (dbIndex !== -1 && studentDB.students[dbIndex].avatarId !== undefined) {
@@ -131,7 +167,7 @@ function initLoginUI() {
             }
 
             loginModal.style.display = 'none';
-            
+
             // Frissítjük a neveket
             const sidebarUserInfo = document.getElementById('sidebar-user-info');
             const avatarLetter = currentStudent.name.charAt(0).toUpperCase();
@@ -142,7 +178,7 @@ function initLoginUI() {
                     <p style="font-size: 0.85rem; color: var(--color-on-surface-variant); margin: 0;">${currentStudent.class}</p>
                 </div>
             `;
-            
+
             if (typeof currentStudent.avatarId === 'undefined' || currentStudent.avatarId === null) {
                 // Nincs avatar, nyissuk meg a választót!
                 document.getElementById('avatar-modal').style.display = 'flex';
@@ -162,7 +198,7 @@ function generateAvatarSpriteStyles() {
         offsetX: 20, offsetY: 20, // Kicsit megnövelve a margót
         boxSize: 80, smallBoxSize: 40
     };
-    
+
     const cellW = (config.imageW - (2 * config.offsetX)) / config.cols;
     const cellH = (config.imageH - (2 * config.offsetY)) / config.rows;
     const scale = config.boxSize / cellW;
@@ -176,11 +212,11 @@ function generateAvatarSpriteStyles() {
     for (let i = 0; i < config.totalAvatars; i++) {
         const col = i % config.cols;
         const row = Math.floor(i / config.cols);
-        
+
         const posX = -((config.offsetX + col * cellW) * scale);
         const posY = -((config.offsetY + row * cellH) * scale);
         styleCSS += `.avatar-${i} { background-position: ${posX}px ${posY}px; }\n`;
-        
+
         const posSmallX = -((config.offsetX + col * cellW) * smallScale);
         const posSmallY = -((config.offsetY + row * cellH) * smallScale);
         styleCSS += `.avatar-sm-${i} { background-position: ${posSmallX}px ${posSmallY}px; }\n`;
@@ -196,7 +232,7 @@ function initAvatarModal() {
     const grid = document.getElementById('avatar-grid');
     if (!grid) return;
     grid.innerHTML = '';
-    
+
     // A "Nincs" gomb (törlés)
     const noneBtn = document.createElement('div');
     noneBtn.className = 'avatar-option';
@@ -212,7 +248,7 @@ function initAvatarModal() {
         saveAvatar(null);
     });
     grid.appendChild(noneBtn);
-    
+
     for (let i = 0; i < 40; i++) {
         const btn = document.createElement('div');
         btn.className = `avatar-option avatar-sprite avatar-${i}`;
@@ -222,8 +258,8 @@ function initAvatarModal() {
         });
         grid.appendChild(btn);
     }
-    
-    const headerAvatarBtn = document.querySelectorAll('.app-header__btn')[0]; 
+
+    const headerAvatarBtn = document.querySelectorAll('.app-header__btn')[0];
     if (headerAvatarBtn) {
         headerAvatarBtn.addEventListener('click', () => {
             if (currentStudent) {
@@ -256,7 +292,7 @@ function initAvatarModal() {
 
 function saveAvatar(avatarId) {
     if (!currentStudent) return;
-    
+
     currentStudent.avatarId = avatarId;
     const dbIndex = studentDB.students.findIndex(s => s.name === currentStudent.name);
     if (dbIndex !== -1) {
@@ -264,23 +300,23 @@ function saveAvatar(avatarId) {
         // Mentés a PHP backendre a LocalStorage helyett
         saveToDatabase();
     }
-    
+
     document.getElementById('avatar-modal').style.display = 'none';
     document.getElementById('app-content').style.display = 'block';
-    
+
     updateUserAvatarUI();
 }
 
 function updateUserAvatarUI() {
     if (!currentStudent) return;
-    
+
     let aId = currentStudent.avatarId;
-    const headerAvatarBtn = document.querySelectorAll('.app-header__btn')[0]; 
-    
+    const headerAvatarBtn = document.querySelectorAll('.app-header__btn')[0];
+
     // Csak a header ikont frissítjük az avatárral (a sidebar megmarad a kezdőbetűnek, ahogy a belépés beállítja)
     if (typeof aId !== 'undefined' && aId !== null) {
         const smallSpriteClass = `avatar-sprite-sm avatar-sm-${aId}`;
-        
+
         if (headerAvatarBtn) {
             headerAvatarBtn.classList.remove('material-symbols-outlined');
             headerAvatarBtn.innerHTML = `<div class="${smallSpriteClass}"></div>`;
@@ -298,7 +334,13 @@ function updateUserAvatarUI() {
 
 // Indítás
 initDatabase();
-initHints();
+initHints().then(() => {
+    // Alapértelmezett betű mimicry szövegének beállítása induláskor
+    const mimicryTextEl = document.querySelector('.mimicry-card__text');
+    if (mimicryTextEl) {
+        mimicryTextEl.textContent = getMimicryText('a');
+    }
+});
 initAvatarModal();
 const coverflowEl = document.getElementById('letter-coverflow');
 
@@ -311,7 +353,7 @@ if (coverflowEl) {
         const face1 = document.getElementById('face-1');
         const face2 = document.getElementById('face-2');
         const face3 = document.getElementById('face-3');
-        
+
         if (face0 && face1 && face2 && face3) {
             // Konzisztens, nyelvtanilag helyes adatok minden kártyaoldalon (Pl. 'Cs', 'Dzs')
             // Nyomtatott kártya: Ha többjegyű betű (pl. Cs), akkor az 's'-t külön span-be tesszük,
@@ -323,16 +365,16 @@ if (coverflowEl) {
             } else {
                 face0.innerText = letter;
             }
-            
+
             face1.innerText = letter.toLowerCase();
             face2.innerText = letter; // Írottnál marad a text, mert a FontForge rajzolja egybe!
             face3.innerText = letter.toLowerCase();
         }
 
         // Dinamikus CSS változók a hosszú betűkhöz
-        let spread = '24%';
+        let spread = '34%';
         let fontSize = '25cqw';
-        
+
         if (letter.length === 2) {
             fontSize = '20cqw';
         } else if (letter.length >= 3) {
@@ -350,7 +392,7 @@ if (coverflowEl) {
             document.getElementById('face-2'),
             document.getElementById('face-3')
         ];
-        
+
         items.forEach((item, i) => {
             if (!item) return;
             if (i === activeIndex) {
@@ -472,7 +514,7 @@ if (coverflowEl) {
                 items.forEach((item, index) => {
                     const wrapEl = document.getElementById(`gallery-wrap-${index}`);
                     const titleEl = document.getElementById(`gallery-title-${index}`);
-                    
+
                     if (wrapEl && titleEl) {
                         wrapEl.innerHTML = item.img
                             ? `<img src="${item.img}" alt="${item.word}" class="gallery__img" id="gallery-img-${index}">`
@@ -491,7 +533,7 @@ if (coverflowEl) {
     document.querySelectorAll('.alphabet-scroll__btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const newLetter = btn.innerText.trim();
-            
+
             // Ha ugyanarra a betűre kattint, ne töltsön be mindent újra (villogás megelőzése)
             if (newLetter === currentLetter) return;
 
@@ -507,7 +549,7 @@ if (coverflowEl) {
             const videoEl = document.getElementById('instructional-video');
             const mimicryImg = document.querySelector('.mimicry-card__image'); // Ha van mimicry kép
             const galleryContentEls = document.querySelectorAll('.gallery__img-wrap, .gallery__word-title');
-            
+
             // Fade Out (Kizárólag a tartalom halványul)
             if (coverflowEl) coverflowEl.style.opacity = '0';
             if (videoEl) videoEl.style.opacity = '0';
@@ -539,11 +581,17 @@ if (coverflowEl) {
                     const safeName = getSafeFileName(currentLetter);
                     // Kép csere
                     mimicryImg.src = `assets/pics/betuk/${safeName}.jpg`;
-                    
+
                     // Ha a kép még nem létezik (404), azonnal cserélje le egy elegáns beépített vektoros helyőrzőre!
                     mimicryImg.onerror = () => {
                         mimicryImg.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="%23cccccc" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
                     };
+                }
+
+                // Mimicry szöveg dinamikus frissítése
+                const mimicryTextEl = document.querySelector('.mimicry-card__text');
+                if (mimicryTextEl) {
+                    mimicryTextEl.textContent = getMimicryText(currentLetter);
                 }
 
                 // Galéria frissítése (nem rombolja le a kártyákat)
@@ -553,7 +601,7 @@ if (coverflowEl) {
                 if (coverflowEl) coverflowEl.style.opacity = '1';
                 if (videoEl) videoEl.style.opacity = '1';
                 if (mimicryImg) mimicryImg.style.opacity = '1';
-                
+
                 // Mivel a renderGallery új imgContent-et rakhatott be, újra lekérjük a frissített elemeket a biztonság kedvéért:
                 const updatedGalleryEls = document.querySelectorAll('.gallery__img-wrap, .gallery__word-title');
                 updatedGalleryEls.forEach(el => el.style.opacity = '1');
@@ -612,7 +660,7 @@ if (coverflowEl) {
             isPlaying = false;
             pronounceBtn.classList.remove('is-playing');
         });
-        
+
         letterAudio.addEventListener('error', () => {
             isPlaying = false;
             pronounceBtn.classList.remove('is-playing');
@@ -629,10 +677,10 @@ if (coverflowEl) {
         function showHelp() {
             const letter = currentLetter.toLowerCase();
             const hintText = hintsDB[letter] || "Hamarosan érkezik a fonomimikai leírás ehhez a betűhöz is!";
-            
+
             helpContent.innerHTML = hintText.replace(/\n/g, '<br><br>');
             helpTooltip.style.display = 'block';
-            
+
             // Késleltetés az animációhoz
             setTimeout(() => {
                 helpTooltip.classList.add('help-tooltip--show');

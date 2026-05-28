@@ -1,6 +1,18 @@
 # Changelog
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
+## [1.3.5] - 2026-05-29
+### Hozzáadva
+- **Dinamikus fonomimikai hívószavak**: A mimicry kártyák alatti leírások ("Kerekítsük a szánkat!" típusú, fixen beégetett szövegek helyett) mostantól automatikusan, dinamikusan töltődnek be a `hints.json` adatbázisból induláskor és lapozáskor is. A JavaScript egy intelligens reguláris kifejezés (Regex) segítségével nyeri ki a mondatból a hívószavakat a névelők (a, az, egy) automatikus kizárásával.
+
+### Módosítva
+- **Fonomimikai hívószavak finomhangolása**: A kinyert hívószavak a dizájnnak megfelelően csupa kisbetűvel, idézőjelek nélkül jelennek meg. Az 'M' betű halmozott jelzői ("éhes, korgó pocakú medve") miatt a regex algoritmus immár nem vág a vesszőnél. A speciális betűkhöz (Gy, J, Q, Ty, W, X, Y) egyedi kivétel-szótár (overrides) készült a pontos, testreszabott megjelenítés érdekében.
+- **Videólejátszó vizuális tisztítása**: A `style.css`-ben eltávolításra került a videólejátszó előnézeti sötétítése (overlay). A `background-color` értéke mind alapállapotban, mind hover (egérráhúzás) esetén `transparent` lett, így a videók a lejátszás gomb mögött eredeti, tiszta fényerejükkel jelennek meg.
+- **Mobil reszponzivitás javítása (szalagmenü)**: A funkciótlan és zavaró alsó navigációs sáv (`bottom-nav`) eltávolításra került. Helyette 768px alatti képernyőméretnél a főtartalom fölött egy `sticky` (görgetéskor felül tapadó), vízszintesen görgethető betűválasztó szalag (`.mobile-alphabet-scroll`) biztosítja az app-szerű, kényelmes navigációt.
+- **Kártyák aránytartása kis kijelzőn**: A betűkártya (`.interactive-card`) minimum magassága drasztikusan lecsökkentve (`350px`-ről `150px`-re). Ezzel megszűnt a betűk "alásüllyedése": az `aspect-ratio: 16/9` kényszerítése miatt a kártya geometriája mostantól minden képernyőn megmarad, így az írott betűk mindig pontosan a vonalas háttérre illeszkednek.
+- **Vezérlőgombok dinamikus méretezése**: A Coverflow lapozó nyilai és a hangszóró gomb a fix pixeles méretek helyett `clamp()` és `cqw` alapú reszponzív méretezést kaptak, így a nagyon keskeny (pl. 350px-es) telefonokon is arányosak maradnak és többé nem takarják ki a betűket.
+- **Betűkártyák térközének növelése**: A Coverflow animációnál az aktív és a háttérben lévő (next/prev) kártyák közötti perspektivikus eltolás (`--card-spread`) 24%-ról 34%-ra lett növelve a `main.js`-ben a szellősebb vizuális élmény érdekében.
+
 ## [1.3.4] - 2026-05-28
 ### Hozzáadva
 - **Írott kisbetűk bevezetése**: A frissen elkészített, saját tervezésű írott kisbetűk bekerültek a stílusrendszerbe. A CSS-ben létrehozott `#face-3` azonosítóval immár teljesen külön és szabadon paraméterezhető a kisbetűk méretezése (55cqw) és precíz alapvonalra illesztése.

@@ -4,13 +4,14 @@ A Fonomimika tanoda egy gyermekeknek (általános iskola alsó tagozata) szánt 
 
 ## Technológiai Stack
 
-A projekt egy letisztult, keretrendszerektől mentes Vite környezetre (Vanilla HTML, CSS, JavaScript) épül. A stíluslapok kialakítása a klasszikus webfejlesztési elveket követi, natív CSS változókkal és szigorú BEM (Block Element Modifier) metodológia szerint elnevezett komponensekkel felépítve (Tailwind CSS használata nélkül).
+A projekt egy letisztult, keretrendszerektől mentes Vite környezetre (Vanilla HTML, CSS, JavaScript) épül. A stíluslapok kialakítása a klasszikus webfejlesztési elveket követi, natív CSS változókkal és szigorú BEM (Block Element Modifier) metodológia szerint elnevezett komponensekkel felépítve (Tailwind CSS használata nélkül). A fejlesztői környezet konfigurációja (`vite.config.js`) lokális proxybeállításokkal is rendelkezik a zökkenőmentes adatintegráció érdekében.
 
 ## Főbb funkciók
-- **Interaktív betűtanulás**: A betűk megjelenítése kis- és nagybetűs, illetve írott és nyomtatott formában is.
-- **Vizuális segédletek**: Hangokhoz rendelt fonomimikai mozdulatokat ábrázoló képek, valamint egyénileg vezérelhető videós kiegészítések.
-- **A teljes magyar ábécé**: Könnyen navigálható lista a magyar nyelv összes betűjével (A-tól Zs-ig).
-- **Dinamikus Szógaléria**: Minden kiválasztott betűhöz azonnal betöltődnek az adott betűvel kezdődő/tartalmazó szavak és a hozzájuk tartozó illusztrációk.
+- **Személyre szabott tanulói profilok**: Interaktív bejelentkezési modál és avatarkiválasztó rendszer, amely barátságos, személyes élményt nyújt a gyermekek számára a saját nevükkel és osztályukkal.
+- **Interaktív betűtanulás saját betűkészlettel**: A betűk megjelenítése kis- és nagybetűs, illetve írott és nyomtatott formában. A program mögött egy egyedi, saját fejlesztésű **FonomimikaScript** betűkészlet (FontForge GSUB) dolgozik, amely pedagógiailag hiteles 2:1 méretarányban támogatja a többjegyű magyar betűk (pl. Cs, Dzs) és az írott ligatúrák hibátlan megjelenítését.
+- **Vizuális segédletek és intelligens súgó**: Hangokhoz rendelt fonomimikai mozdulatokat ábrázoló dinamikus fotók és videók. A felhasználót egy adatalapú, interaktív Súgó (tooltip) és egy intelligens hívószó-kinyerő algoritmus (Regex) segíti a mozdulatok elsajátításában.
+- **A teljes magyar ábécé**: Könnyen navigálható, animált lista a magyar nyelv összes betűjével (A-tól Zs-ig).
+- **Dinamikus Szógaléria**: Minden kiválasztott betűhöz azonnal betöltődnek az adott betűvel kezdődő, vagy azt tartalmazó szavak és a hozzájuk tartozó színes illusztrációk.
 
 ## Telepítés és Futtatás
 

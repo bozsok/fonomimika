@@ -362,9 +362,7 @@ body {
   gap: 2.5rem;
 }
 
-.app-main__padding-bottom {
-  height: 6rem;
-}
+
 
 /* BEM: learning-hero */
 .learning-hero {
@@ -398,8 +396,9 @@ body {
   border-radius: var(--radius-xl);
   padding: 0;
   container-type: inline-size;
-  height: 100%;
-  min-height: 250px;
+  aspect-ratio: 16 / 9;
+  /* Skálázódik a szélességgel, így a cqw betűk sosem lógnak ki */
+  min-height: 150px;
   border: 2px solid var(--color-primary-container);
   box-shadow: 0 10px 30px rgba(255, 217, 102, 0.2);
 }
@@ -407,8 +406,8 @@ body {
 .house-indicator {
   position: absolute;
   top: 0;
-  left: 1.5rem;
-  width: 15rem;
+  left: 2.5cqw;
+  width: 25cqw;
   height: 100%;
   z-index: 2;
   /* Háttér fölött, betűk alatt */
@@ -451,9 +450,8 @@ body {
 .coverflow-scene {
   position: absolute;
   top: 0;
-  left: calc(15% + 70px);
-  /* Tovább toljuk jobbra */
-  width: calc(85% - 10px);
+  left: 28cqw;
+  width: 72cqw;
   height: 100%;
   pointer-events: none;
   /* Átengedi a kattintásokat a kártyára */
@@ -515,14 +513,14 @@ body {
 /* Navigation Arrows */
 .coverflow-nav {
   position: absolute;
-  bottom: 1.5rem;
+  bottom: clamp(0.5rem, 3cqw, 1.5rem);
   top: auto;
   background: #fff3cd;
   /* Enyhe pasztell sárga */
   border: 2px solid var(--color-primary-container);
   border-radius: var(--radius-full);
-  width: 3.5rem;
-  height: 3.5rem;
+  width: clamp(2rem, 10cqw, 3.5rem);
+  height: clamp(2rem, 10cqw, 3.5rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -547,11 +545,11 @@ body {
 }
 
 .coverflow-nav--prev {
-  left: 1.5rem;
+  left: clamp(0.5rem, 3cqw, 1.5rem);
 }
 
 .coverflow-nav--next {
-  left: 6rem;
+  left: clamp(3rem, 15cqw, 6rem);
 }
 
 
@@ -675,16 +673,16 @@ body {
   background-color: var(--color-primary);
   color: white;
   border-color: #574500;
-  font-size: 1.5rem;
+  font-size: clamp(1.2rem, 5cqw, 1.5rem);
 }
 
 .interactive-card__btn--floating {
   position: absolute;
-  bottom: 1.5rem;
-  right: 1.5rem;
+  bottom: clamp(0.5rem, 3cqw, 1.5rem);
+  right: clamp(0.5rem, 3cqw, 1.5rem);
   width: auto;
-  padding: 0 1.5rem;
-  height: 4rem;
+  padding: 0 clamp(0.75rem, 4cqw, 1.5rem);
+  height: clamp(2.5rem, 12cqw, 4rem);
   border-radius: var(--radius-full);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   z-index: 20;
@@ -869,7 +867,7 @@ body {
 .video-player__overlay {
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -878,7 +876,7 @@ body {
 }
 
 .video-player:hover .video-player__overlay {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: transparent;
 }
 
 .video-player__icon {
@@ -979,57 +977,41 @@ body {
   border-radius: var(--radius-full);
 }
 
-/* BEM: bottom-nav */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+/* BEM: mobile-alphabet-scroll */
+.mobile-alphabet-scroll {
+  display: flex;
+  position: sticky;
+  top: 0;
   z-index: 50;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 0.5rem 1rem 1rem 1rem;
+  overflow-x: auto;
+  gap: 0.5rem;
+  padding: 0.5rem;
   background-color: var(--color-surface);
-  border-top: 4px solid var(--color-secondary-container);
-  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.bottom-nav__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  border: none;
-  background: none;
-  color: var(--color-on-surface-variant);
-  cursor: pointer;
-  transition: all 0.2s;
-  border-radius: var(--radius-md);
-}
-
-.bottom-nav__item:hover {
-  background-color: var(--color-surface-container-high);
-}
-
-.bottom-nav__item--active {
-  background-color: var(--color-tertiary-container);
-  color: var(--color-on-tertiary-container);
-  border-radius: var(--radius-full);
-  padding: 0.5rem 1.5rem;
-  transform: scale(1.1);
+  border-radius: var(--radius-xl);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  /* Scrollbar elrejtése, de görgethető marad a tartalom */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.bottom-nav__item--active:hover {
-  background-color: var(--color-tertiary-container);
+.mobile-alphabet-scroll::-webkit-scrollbar {
+  display: none;
 }
 
-.bottom-nav__label {
-  font-size: 10px;
-  font-weight: bold;
+.mobile-alphabet-scroll .alphabet-scroll__btn {
+  flex-shrink: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: 1.25rem;
 }
+
+@media (min-width: 768px) {
+  .mobile-alphabet-scroll {
+    display: none;
+  }
+}
+
 
 /* Scrollbar Customization */
 ::-webkit-scrollbar {
@@ -1071,18 +1053,12 @@ body {
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .app-sidebar {
     display: flex;
   }
 
-  .bottom-nav {
-    display: none;
-  }
 
-  .app-main__padding-bottom {
-    display: none;
-  }
 }
 
 @media (min-width: 1280px) {
