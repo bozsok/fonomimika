@@ -8,6 +8,7 @@ A projekt egy letisztult, keretrendszerektől mentes Vite környezetre (Vanilla 
 
 ## Főbb funkciók
 - **Személyre szabott tanulói profilok**: Interaktív bejelentkezési modál és avatarkiválasztó rendszer, amely barátságos, személyes élményt nyújt a gyermekek számára a saját nevükkel és osztályukkal.
+- **Oktatói adminisztráció és haladáskövetés**: Egy úgynevezett easter egg módszerrel (a főcímre ötször kattintva) előhívható, rejtett, fő- és részletnézeti (*master-detail*) elrendezésű adminisztrációs panel. A pedagógusok másodpercek alatt kereshetnek az osztályok és diákok között, majd rögzíthetik a már megtanult betűket. Az adatok valós időben mentésre kerülnek, a bejelentkezett gyermekek pedig azonnali, motiváló vizuális visszajelzést kapnak a haladásukról a főképernyő betűszalagján.
 - **Interaktív betűtanulás saját betűkészlettel**: A betűk megjelenítése kis- és nagybetűs, illetve írott és nyomtatott formában. A program mögött egy egyedi, saját fejlesztésű **FonomimikaScript** betűkészlet (FontForge GSUB) dolgozik, amely pedagógiailag hiteles 2:1 méretarányban támogatja a többjegyű magyar betűk (pl. Cs, Dzs) és az írott ligatúrák hibátlan megjelenítését.
 - **Vizuális segédletek és intelligens súgó**: Hangokhoz rendelt fonomimikai mozdulatokat ábrázoló dinamikus fotók és videók. A felhasználót egy adatalapú, interaktív Súgó (tooltip) és egy intelligens hívószó-kinyerő algoritmus (Regex) segíti a mozdulatok elsajátításában.
 - **A teljes magyar ábécé**: Könnyen navigálható, animált lista a magyar nyelv összes betűjével (A-tól Zs-ig).

@@ -185,6 +185,7 @@ function initLoginUI() {
             } else {
                 // Van avatar, mehetünk a főképernyőre
                 updateUserAvatarUI();
+                updateLearnedLettersUI();
                 appContent.style.display = 'block';
             }
         }
@@ -305,6 +306,7 @@ function saveAvatar(avatarId) {
     document.getElementById('app-content').style.display = 'block';
 
     updateUserAvatarUI();
+    updateLearnedLettersUI();
 }
 
 function updateUserAvatarUI() {
@@ -330,6 +332,19 @@ function updateUserAvatarUI() {
             headerAvatarBtn.style.padding = '';
         }
     }
+}
+
+function updateLearnedLettersUI() {
+    if (!currentStudent) return;
+    const learned = currentStudent.learnedLetters || [];
+    
+    document.querySelectorAll('.alphabet-scroll__btn').forEach(btn => {
+        const letter = btn.innerText.trim();
+        btn.classList.remove('alphabet-scroll__btn--learned-student');
+        if (learned.includes(letter)) {
+            btn.classList.add('alphabet-scroll__btn--learned-student');
+        }
+    });
 }
 
 // Indítás
@@ -726,3 +741,160 @@ document.querySelectorAll('.pressable-btn, .app-header__btn, .alphabet-scroll__b
         }, 150);
     });
 });
+
+/* ========================================================================= */
+/* Teacher Admin Modal Logic (5 kattintásos rejtett belépés)                 */
+/* ========================================================================= */
+const adminTrigger = document.getElementById('admin-trigger');
+const teacherModal = document.getElementById('teacher-modal');
+const closeTeacherModal = document.getElementById('close-teacher-modal');
+const teacherSearch = document.getElementById('teacher-search');
+const teacherStudentList = document.getElementById('teacher-student-list');
+
+let adminClickCount = 0;
+let adminClickTimeout;
+let teacherSelectedStudent = null;
+
+if (adminTrigger) {
+    adminTrigger.addEventListener('click', () => {
+        adminClickCount++;
+        clearTimeout(adminClickTimeout);
+        
+        if (adminClickCount >= 5) {
+            adminClickCount = 0;
+            openTeacherModal();
+        } else {
+            adminClickTimeout = setTimeout(() => {
+                adminClickCount = 0;
+            }, 1500); // 1.5 másodpercen belül kell az 5 kattintás
+        }
+    });
+}
+
+if (closeTeacherModal) {
+    closeTeacherModal.addEventListener('click', () => {
+        teacherModal.style.display = 'none';
+    });
+}
+
+function openTeacherModal() {
+    teacherModal.style.display = 'flex';
+    if (teacherSearch) teacherSearch.value = '';
+    renderTeacherStudentList(studentDB?.students || []);
+    
+    // Alapértelmezett, üres Detail nézet
+    teacherSelectedStudent = null;
+    const nameEl = document.getElementById('teacher-detail-name');
+    const classEl = document.getElementById('teacher-detail-class');
+    const gridEl = document.getElementById('teacher-alphabet-grid');
+    
+    if (nameEl) nameEl.innerText = 'Válassz egy tanulót!';
+    if (classEl) classEl.innerText = 'Itt tudod rögzíteni az elsajátított betűket.';
+    if (gridEl) gridEl.innerHTML = '';
+}
+
+function renderTeacherStudentList(list) {
+    if (!teacherStudentList) return;
+    teacherStudentList.innerHTML = '';
+    
+    if (list.length === 0) {
+        teacherStudentList.innerHTML = '<p style="color: var(--color-on-surface-variant); padding: 1rem;">Nincs találat.</p>';
+        return;
+    }
+
+    list.forEach(student => {
+        const item = document.createElement('div');
+        item.className = 'teacher-student-item';
+        
+        // Ha van kiválasztott diák, és megegyezik, akkor aktív osztályt kap
+        if (teacherSelectedStudent && teacherSelectedStudent.name === student.name) {
+            item.classList.add('teacher-student-item--active');
+        }
+        
+        item.innerHTML = `
+            <div>
+                <div style="font-size: 1.1rem; margin-bottom: 0.2rem;">${student.name}</div>
+                <div style="font-size: 0.85rem; opacity: 0.8;">${student.class}</div>
+            </div>
+            <span class="material-symbols-outlined" style="font-size: 1.5rem;">chevron_right</span>
+        `;
+        
+        item.addEventListener('click', () => {
+            teacherSelectedStudent = student;
+            // Újra rendereljük a listát, hogy a kiválasztott stílus frissüljön
+            renderTeacherStudentList(list);
+            renderTeacherDetail();
+        });
+        
+        teacherStudentList.appendChild(item);
+    });
+}
+
+if (teacherSearch) {
+    teacherSearch.addEventListener('input', (e) => {
+        const val = normalizeStr(e.target.value);
+        const list = studentDB?.students || [];
+        
+        if (!val) {
+            renderTeacherStudentList(list);
+            return;
+        }
+        
+        const filtered = list.filter(s => 
+            normalizeStr(s.name).includes(val) || 
+            normalizeStr(s.class || '').includes(val)
+        );
+        renderTeacherStudentList(filtered);
+    });
+}
+
+function renderTeacherDetail() {
+    if (!teacherSelectedStudent) return;
+    
+    document.getElementById('teacher-detail-name').innerText = teacherSelectedStudent.name;
+    document.getElementById('teacher-detail-class').innerText = `${teacherSelectedStudent.class} - Elsajátított betűk kezelése`;
+    
+    const grid = document.getElementById('teacher-alphabet-grid');
+    grid.innerHTML = '';
+    
+    // Biztosítjuk, hogy a diák adatobjektumában létezzen a learnedLetters tömb
+    if (!Array.isArray(teacherSelectedStudent.learnedLetters)) {
+        teacherSelectedStudent.learnedLetters = [];
+    }
+    
+    // Teljes ábécé gombok renderelése
+    const alphabet = ['A', 'Á', 'B', 'C', 'Cs', 'D', 'Dz', 'Dzs', 'E', 'É', 'F', 'G', 'Gy', 'H', 'I', 'Í', 'J', 'K', 'L', 'Ly', 'M', 'N', 'Ny', 'O', 'Ó', 'Ö', 'Ő', 'P', 'Q', 'R', 'S', 'Sz', 'T', 'Ty', 'U', 'Ú', 'Ü', 'Ű', 'V', 'W', 'X', 'Y', 'Z', 'Zs'];
+    
+    alphabet.forEach(letter => {
+        const btn = document.createElement('button');
+        btn.className = 'teacher-alphabet-btn';
+        btn.innerText = letter;
+        
+        // Ha már megtanulta, adjuk hozzá az aktív stílust
+        if (teacherSelectedStudent.learnedLetters.includes(letter)) {
+            btn.classList.add('teacher-alphabet-btn--learned');
+        }
+        
+        btn.addEventListener('click', () => {
+            const idx = teacherSelectedStudent.learnedLetters.indexOf(letter);
+            if (idx > -1) {
+                // Ha benne van, töröljük (már nem tudja)
+                teacherSelectedStudent.learnedLetters.splice(idx, 1);
+                btn.classList.remove('teacher-alphabet-btn--learned');
+            } else {
+                // Ha nincs benne, hozzáadjuk (megtanulta)
+                teacherSelectedStudent.learnedLetters.push(letter);
+                btn.classList.add('teacher-alphabet-btn--learned');
+            }
+            // Azonnali mentés a PHP backend felé!
+            saveToDatabase();
+            
+            // Ha a jelenleg bejelentkezett felhasználót módosítjuk, azonnal frissítjük a főfelületet is
+            if (currentStudent && teacherSelectedStudent.name === currentStudent.name) {
+                updateLearnedLettersUI();
+            }
+        });
+        
+        grid.appendChild(btn);
+    });
+}

@@ -1,6 +1,13 @@
 # Changelog
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
+## [1.4.0] - 2026-05-29
+### Hozzáadva
+- **Tanári haladáskövető modul**: Bevezetésre került egy rejtett (úgynevezett easter egg alapú) pedagógusi adminisztrációs felület. A "Fonomimika tanoda" főcímre ötszöri kattintással érhető el. Tartalmaz egy gyorskeresővel felszerelt, fő- és részletnézeti (*master-detail*) tanulói listát az elsajátított betűk villámgyors rögzítésére.
+- **Azonnali vizuális visszajelzés a tanulóknak**: A bejelentkezett diákok számára a főképernyő ábécészalagján (mind az asztali oldalsávon, mind a mobilnézeten) a már elsajátított betűk motiváló, kiemelt kék háttérszínt kapnak.
+- **Valós idejű szinkronizáció**: A tanulók haladásának szerkesztése az adminisztrációs panelen azonnal, "Mentés" gomb nélkül szinkronizálódik a PHP-háttérrendszer (*backend*) felé (`students.json`), és egyidejűleg frissíti az aktív felhasználó grafikus felületét.
+
+
 ## [1.3.5] - 2026-05-29
 ### Hozzáadva
 - **Dinamikus fonomimikai hívószavak**: A mimicry kártyák alatti leírások ("Kerekítsük a szánkat!" típusú, fixen beégetett szövegek helyett) mostantól automatikusan, dinamikusan töltődnek be a `hints.json` adatbázisból induláskor és lapozáskor is. A JavaScript egy intelligens reguláris kifejezés (Regex) segítségével nyeri ki a mondatból a hívószavakat a névelők (a, az, egy) automatikus kizárásával.
