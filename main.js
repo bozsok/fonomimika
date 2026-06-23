@@ -166,6 +166,14 @@ function initLoginUI() {
                 currentStudent.avatarId = studentDB.students[dbIndex].avatarId;
             }
 
+            // Demó módban betöltjük a localStorage-ból a mentett avatárt
+            if (import.meta.env.VITE_APP_MODE === 'demo') {
+                const savedAvatar = localStorage.getItem('demo_avatar_id');
+                if (savedAvatar !== null) {
+                    currentStudent.avatarId = parseInt(savedAvatar, 10);
+                }
+            }
+
             loginModal.style.display = 'none';
 
             // Frissítjük a neveket
@@ -298,8 +306,12 @@ function saveAvatar(avatarId) {
     const dbIndex = studentDB.students.findIndex(s => s.name === currentStudent.name);
     if (dbIndex !== -1) {
         studentDB.students[dbIndex].avatarId = avatarId;
-        // Mentés a PHP backendre a LocalStorage helyett
-        saveToDatabase();
+        // Demó módban local storage-ba mentünk, egyébként a PHP backendre
+        if (import.meta.env.VITE_APP_MODE === 'demo') {
+            localStorage.setItem('demo_avatar_id', avatarId);
+        } else {
+            saveToDatabase();
+        }
     }
 
     document.getElementById('avatar-modal').style.display = 'none';
@@ -757,6 +769,10 @@ let teacherSelectedStudent = null;
 
 if (adminTrigger) {
     adminTrigger.addEventListener('click', () => {
+        // Demó módban teljesen letiltjuk az admin felület elérését
+        if (import.meta.env.VITE_APP_MODE === 'demo') {
+            return;
+        }
         adminClickCount++;
         clearTimeout(adminClickTimeout);
         

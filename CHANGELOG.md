@@ -1,6 +1,17 @@
 # Changelog
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
+
+## [1.5.0] - 2026-06-23
+### Hozzáadva
+- **Demó és éles build rendszer**: Kialakításra került a környezettudatos Vite build pipeline. Az `npm run build:all` lefuttatásával a valódi iskolai változat a `dist`, míg a nyilvános demó változat a `dist/demo` mappába épül fel.
+- **Különálló demó adatbázis**: Létrejött a `public/data/students_demo.json` fájl, ami kizárólag a biztonságos „Példa Tanuló” profilját tartalmazza a nyilvános teszteléshez.
+- **Post-build tisztító mechanizmus**: A demó build végén egy automatikus Vite plugin gondoskodik a valódi tanulói adatbázis (`students.json`) felülírásáról a demó tartalommal, valamint a szerveroldali mentést végző PHP (`save_data.php`) és az `api/` mappa teljes fizikai törléséről a demó könyvtárból.
+
+### Módosítva
+- **Demó mód korlátozásai**: A `main.js` módosításával demó üzemmódban az adminisztrációs felület (5 kattintásos trigger) teljesen le van tiltva.
+- **Kliensoldali mentés demó módban**: Az avatar kiválasztásakor a program nem küld kérést a szervernek, hanem a látogató böngészőjének `localStorage` memóriáját használja mentésre és betöltésre, megakadályozva a hálózati hibákat és a szerveroldali adatsérülést.
+
 ## [1.4.0] - 2026-05-29
 ### Hozzáadva
 - **Tanári haladáskövető modul**: Bevezetésre került egy rejtett (úgynevezett easter egg alapú) pedagógusi adminisztrációs felület. A "Fonomimika tanoda" főcímre ötszöri kattintással érhető el. Tartalmaz egy gyorskeresővel felszerelt, fő- és részletnézeti (*master-detail*) tanulói listát az elsajátított betűk villámgyors rögzítésére.

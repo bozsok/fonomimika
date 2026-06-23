@@ -33,3 +33,25 @@ A projekt egy letisztult, keretrendszerektől mentes Vite környezetre (Vanilla 
 
 4. Nyisd meg a webalkalmazást:
    A szerver alapértelmezetten a **3000-es porton** indul. A böngésződben nyisd meg a [http://localhost:3000](http://localhost:3000) címet.
+
+## Projekt Buildelése (Gyártása)
+
+Az alkalmazásból két különböző változatot lehet építeni az éles szerverre való feltöltéshez:
+
+* **Valódi iskolai verzió buildelése:**
+  ```bash
+  npm run build
+  ```
+  Ez a `dist` mappába helyezi a fájlokat, beleértve a valódi diákok listáját és a szerveroldali mentést végző PHP kódot.
+
+* **Nyilvános demó verzió buildelése:**
+  ```bash
+  npm run build:demo
+  ```
+  Ez a `dist/demo` mappába építi fel az adminisztráció nélküli, kizárólag a „Példa Tanuló” adatbázisát tartalmazó, kliensoldali mentéssel ellátott verziót.
+
+* **Mindkét verzió együttes buildelése:**
+  ```bash
+  npm run build:all
+  ```
+  Ez egymás után legenerálja mind a valódi éles verziót a `dist` mappába, mind a demó verziót a `dist/demo` mappába.
