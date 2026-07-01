@@ -2,6 +2,14 @@
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
 
+## [1.5.2] - 2026-07-01
+### Módosítva
+- **Villódzásmentes demó feliratok**: A demó bejelentkező feliratainak módosítása átkerült a futásidejű JavaScriptből a build-idejű statikus HTML transzformációba (`vite.config.js`). Ezzel teljesen kiküszöböltük a bejelentkező modal betöltéskor fellépő rövid villódzását (amikor az eredeti feliratok egy pillanatra láthatóak voltak a hálózati lekérdezés befejeződése előtt).
+
+## [1.5.1] - 2026-07-01
+### Módosítva
+- **Demó bejelentkező felület testreszabása**: A bejelentkezési modal szövegei demó módban automatikusan megváltoznak: az útmutató szöveg a „Kérlek, gépeld be a 'Példa Tanuló' nevet a belépéshez!”, a beviteli mező helyőrzője (placeholder) pedig a „Példa Tanuló” feliratra cserélődik, megkönnyítve a demó látogatók bejelentkezését.
+
 ## [1.5.0] - 2026-06-23
 ### Hozzáadva
 - **Demó és éles build rendszer**: Kialakításra került a környezettudatos Vite build pipeline. Az `npm run build:all` lefuttatásával a valódi iskolai változat a `dist`, míg a nyilvános demó változat a `dist/demo` mappába épül fel.

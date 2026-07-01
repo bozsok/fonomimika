@@ -112,7 +112,6 @@ function initLoginUI() {
     const autocompleteList = document.getElementById('autocomplete-list');
     const loginBtn = document.getElementById('login-btn');
     const sidebarUserInfo = document.getElementById('sidebar-user-info');
-
     let selectedStudent = null;
 
     searchInput.addEventListener('input', (e) => {

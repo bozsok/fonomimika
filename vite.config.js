@@ -35,6 +35,22 @@ export default defineConfig(({ mode }) => {
               fs.unlinkSync(demoJson);
               console.log('Post-build: a students.json felülírva a demó adatbázissal.');
             }
+
+            // 3. Módosítjuk az index.html szövegét, hogy megelőzzük a kliensoldali villódzást (FOUC)
+            const demoHtmlPath = path.join(demoDir, 'index.html');
+            if (fs.existsSync(demoHtmlPath)) {
+              let html = fs.readFileSync(demoHtmlPath, 'utf-8');
+              html = html.replace(
+                'Kérlek, válaszd ki a neved a belépéshez!',
+                'Kérlek, gépeld be a &#39;Példa Tanuló&#39; nevet a belépéshez!'
+              );
+              html = html.replace(
+                'placeholder="Gépeld be a neved..."',
+                'placeholder="Példa Tanuló"'
+              );
+              fs.writeFileSync(demoHtmlPath, html, 'utf-8');
+              console.log('Post-build: a demó index.html szövegei felülírva a build során.');
+            }
           } else {
             // Normál build esetén töröljük a students_demo.json fájlt a dist mappából
             const realDir = path.resolve(__dirname, 'dist');
