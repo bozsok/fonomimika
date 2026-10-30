@@ -12,7 +12,7 @@ A projekt egy letisztult, keretrendszerektől mentes Vite környezetre (Vanilla 
 - **Interaktív betűtanulás saját betűkészlettel**: A betűk megjelenítése kis- és nagybetűs, illetve írott és nyomtatott formában. A program mögött egy egyedi, saját fejlesztésű **FonomimikaScript** betűkészlet (FontForge GSUB) dolgozik, amely pedagógiailag hiteles 2:1 méretarányban támogatja a többjegyű magyar betűk (pl. Cs, Dzs) és az írott ligatúrák hibátlan megjelenítését.
 - **Vizuális segédletek és intelligens súgó**: Hangokhoz rendelt fonomimikai mozdulatokat ábrázoló dinamikus fotók és videók. A felhasználót egy adatalapú, interaktív Súgó (tooltip) és egy intelligens hívószó-kinyerő algoritmus (Regex) segíti a mozdulatok elsajátításában.
 - **A teljes magyar ábécé**: Könnyen navigálható, animált lista a magyar nyelv összes betűjével (A-tól Zs-ig).
-- **Dinamikus Szógaléria**: Minden kiválasztott betűhöz azonnal betöltődnek az adott betűvel kezdődő, vagy azt tartalmazó szavak és a hozzájuk tartozó színes illusztrációk.
+- **Dinamikus Szógaléria**: Minden kiválasztott betűhöz azonnal betöltődnek a tematikus szavak (a hanggal kezdődő, azt tartalmazó vagy arra végződő felépítésben) és a hozzájuk tartozó illusztrációk a különálló `gallery.json` adatbázisból.
 
 ## Telepítés és Futtatás
 

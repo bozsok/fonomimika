@@ -2,6 +2,17 @@
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
 
+## [1.6.0] - 2026-10-30
+### Hozzáadva
+- **Teljes magyar szógaléria-adatbázis (`gallery.json`)**: Létrejött a `public/data/gallery.json` adatállomány, amely a teljes magyar ábécé mind a 44 betűjéhez tartalmazza a kidolgozott szójegyzéket és a hozzájuk rendelt képútvonalakat a `Source/szavak adatbázishoz.txt` forrás alapján. A szavak szigorú pedagógiai szisztéma szerint épülnek fel minden betűnél (a szó a vizsgált betűvel kezdődik, benne van, vagy arra végződik).
+- **Önálló képtár (`galeria` mappa)**: Kialakításra került a `public/assets/pics/galeria/` mappa a szógaléria illusztrációinak rendszerezett, dedikált tárolására, 130 darab friss képpel ellátva.
+- **Dinamikus galériainicializálás**: A `main.js`-ben megvalósított aszinkron `initGallery()` modulárisan betölti a galéria adatait a JSON állományból, leválasztva az adatréteget az alkalmazás logikájáról.
+- **Hibatűrő képbetöltés (Fallback)**: A galériakártyák képei automatikus hibakezelővel (`onerror`) lettek ellátva, amely betöltési hiba vagy hiányzó képfájl esetén azonnal és villódzásmentesen átvált az esztétikus Material Symbols helykitöltő ikonra, megakadályozva a sérült képikonok megjelenését.
+
+### Módosítva
+- **Kódkarcsúsítás a `main.js`-ben**: Eltávolításra került a forráskódban korábban rögzített, statikus `galleryData` JavaScript-objektum, így a betűk és szavak kezelése teljesen dinamikussá és külsőleg konfigurálhatóvá vált.
+- **Fejlesztői proxy finomhangolása (`vite.config.js`)**: A Vite helyi fejlesztői szerverének proxybeállítása kiegészült egy `gallery.json` bypass szabállyal, így lokális futtatáskor a kérések közvetlenül a helyi adatbázisból szolgálódnak ki a távoli szerver 404-es válasza helyett.
+
 ## [1.5.2] - 2026-07-01
 ### Módosítva
 - **Villódzásmentes demó feliratok**: A demó bejelentkező feliratainak módosítása átkerült a futásidejű JavaScriptből a build-idejű statikus HTML transzformációba (`vite.config.js`). Ezzel teljesen kiküszöböltük a bejelentkező modal betöltéskor fellépő rövid villódzását (amikor az eredeti feliratok egy pillanatra láthatóak voltak a hálózati lekérdezés befejeződése előtt).

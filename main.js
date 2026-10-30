@@ -2,6 +2,17 @@
 let studentDB = null;
 let currentStudent = null;
 let hintsDB = {};
+let galleryDB = {};
+
+async function initGallery() {
+    try {
+        const response = await fetch('data/gallery.json');
+        galleryDB = await response.json();
+        return galleryDB;
+    } catch (e) {
+        console.error('Hiba a galéria adatbázis betöltésekor:', e);
+    }
+}
 
 async function initHints() {
     try {
@@ -367,6 +378,7 @@ initHints().then(() => {
         mimicryTextEl.textContent = getMimicryText('a');
     }
 });
+const galleryReady = initGallery();
 initAvatarModal();
 const coverflowEl = document.getElementById('letter-coverflow');
 
@@ -451,53 +463,12 @@ if (coverflowEl) {
     updateCoverflowFaces(currentLetter);
     renderCoverflowState();
 
-    // Adatbázis a galériához minden betűre
-    const galleryData = {
-        'A': [{ word: 'alma', img: '' }, { word: 'autó', img: '' }, { word: 'asztal', img: '' }],
-        'Á': [{ word: 'ágy', img: '' }, { word: 'állat', img: '' }, { word: 'ásó', img: '' }],
-        'B': [{ word: 'baba', img: '' }, { word: 'béka', img: '' }, { word: 'bálna', img: '' }],
-        'C': [{ word: 'cápa', img: './assets/pics/capa.jpg' }, { word: 'cumi', img: './assets/pics/cumi.jpg' }, { word: 'cékla', img: './assets/pics/cekla.jpg' }],
-        'CS': [{ word: 'csiga', img: '' }, { word: 'csillag', img: '' }, { word: 'csizma', img: '' }],
-        'D': [{ word: 'dob', img: '' }, { word: 'dinnye', img: '' }, { word: 'dió', img: '' }],
-        'DZ': [{ word: 'edző', img: '' }, { word: 'bodza', img: '' }, { word: 'madzag', img: '' }],
-        'DZS': [{ word: 'dzsungel', img: '' }, { word: 'dzsip', img: '' }, { word: 'dzsinn', img: '' }],
-        'E': [{ word: 'egér', img: '' }, { word: 'eper', img: '' }, { word: 'elefánt', img: '' }],
-        'É': [{ word: 'érem', img: '' }, { word: 'épület', img: '' }, { word: 'ének', img: '' }],
-        'F': [{ word: 'fa', img: '' }, { word: 'fóka', img: '' }, { word: 'fecske', img: '' }],
-        'G': [{ word: 'gomba', img: '' }, { word: 'golyó', img: '' }, { word: 'gép', img: '' }],
-        'GY': [{ word: 'gyertya', img: '' }, { word: 'gyűrű', img: '' }, { word: 'gyerek', img: '' }],
-        'H': [{ word: 'ház', img: '' }, { word: 'hajó', img: '' }, { word: 'híd', img: '' }],
-        'I': [{ word: 'ing', img: '' }, { word: 'iroda', img: '' }, { word: 'iskola', img: '' }],
-        'Í': [{ word: 'íj', img: '' }, { word: 'író', img: '' }, { word: 'írás', img: '' }],
-        'J': [{ word: 'játék', img: '' }, { word: 'juh', img: '' }, { word: 'jég', img: '' }],
-        'K': [{ word: 'kutya', img: '' }, { word: 'könyv', img: '' }, { word: 'kapa', img: '' }],
-        'L': [{ word: 'ló', img: '' }, { word: 'labda', img: '' }, { word: 'lámpa', img: '' }],
-        'LY': [{ word: 'lyuk', img: '' }, { word: 'bagoly', img: '' }, { word: 'osztály', img: '' }],
-        'M': [{ word: 'maci', img: '' }, { word: 'madár', img: '' }, { word: 'macska', img: '' }],
-        'N': [{ word: 'nap', img: '' }, { word: 'nadrág', img: '' }, { word: 'nád', img: '' }],
-        'NY': [{ word: 'nyuszi', img: '' }, { word: 'nyak', img: '' }, { word: 'nyelv', img: '' }],
-        'O': [{ word: 'olló', img: '' }, { word: 'orvos', img: '' }, { word: 'oroszlán', img: '' }],
-        'Ó': [{ word: 'óra', img: '' }, { word: 'óvoda', img: '' }, { word: 'óriás', img: '' }],
-        'Ö': [{ word: 'öv', img: '' }, { word: 'ökör', img: '' }, { word: 'ördög', img: '' }],
-        'Ő': [{ word: 'őz', img: '' }, { word: 'őr', img: '' }, { word: 'ősz', img: '' }],
-        'P': [{ word: 'pók', img: '' }, { word: 'pék', img: '' }, { word: 'pénz', img: '' }],
-        'Q': [{ word: 'quad', img: '' }, { word: 'quiz', img: '' }, { word: 'quinoa', img: '' }],
-        'R': [{ word: 'róka', img: '' }, { word: 'répa', img: '' }, { word: 'rák', img: '' }],
-        'S': [{ word: 'sajt', img: '' }, { word: 'sárkány', img: '' }, { word: 'só', img: '' }],
-        'SZ': [{ word: 'szem', img: '' }, { word: 'szánkó', img: '' }, { word: 'szék', img: '' }],
-        'T': [{ word: 'tej', img: '' }, { word: 'torta', img: '' }, { word: 'tégla', img: '' }],
-        'TY': [{ word: 'tyúk', img: '' }, { word: 'pötty', img: '' }, { word: 'korty', img: '' }],
-        'U': [{ word: 'ujj', img: '' }, { word: 'utca', img: '' }, { word: 'ugatás', img: '' }],
-        'Ú': [{ word: 'út', img: '' }, { word: 'újság', img: '' }, { word: 'úszás', img: '' }],
-        'Ü': [{ word: 'üveg', img: '' }, { word: 'ünnep', img: '' }, { word: 'üst', img: '' }],
-        'Ű': [{ word: 'űrhajó', img: '' }, { word: 'űrlény', img: '' }, { word: 'zűr', img: '' }],
-        'V': [{ word: 'vonat', img: '' }, { word: 'vödör', img: '' }, { word: 'vár', img: '' }],
-        'W': [{ word: 'web', img: '' }, { word: 'wifi', img: '' }, { word: 'walkie-talkie', img: '' }],
-        'X': [{ word: 'xilofon', img: '' }, { word: 'xerox', img: '' }, { word: 'taxi', img: '' }],
-        'Y': [{ word: 'yeti', img: '' }, { word: 'yorki', img: '' }, { word: 'gally', img: '' }],
-        'Z': [{ word: 'zebra', img: '' }, { word: 'zászló', img: '' }, { word: 'zongora', img: '' }],
-        'ZS': [{ word: 'zsiráf', img: '' }, { word: 'zsák', img: '' }, { word: 'zsemle', img: '' }]
-    };
+    function getGalleryImgHTML(item, index) {
+        if (!item.img) {
+            return `<span class="material-symbols-outlined gallery__placeholder-icon" id="gallery-img-${index}">image</span>`;
+        }
+        return `<img src="${item.img}" alt="${item.word}" class="gallery__img" id="gallery-img-${index}" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'material-symbols-outlined gallery__placeholder-icon\\' id=\\'gallery-img-${index}\\'>image</span>';">`;
+    }
 
     function renderGallery(letter) {
         const titleEl = document.getElementById('gallery-title');
@@ -509,7 +480,7 @@ if (coverflowEl) {
         // A galéria címében is a helyes, magyar formátum (pl. "Cs betűs szavak") jelenjen meg
         titleEl.innerText = `${letter} betűs szavak`;
 
-        const items = galleryData[upperLetter];
+        const items = galleryDB ? galleryDB[upperLetter] : null;
 
         if (items && items.length > 0) {
             const existingCards = gridEl.querySelectorAll('.gallery__card');
@@ -518,9 +489,7 @@ if (coverflowEl) {
                 // Első renderelés (vagy üres grid esetén)
                 gridEl.innerHTML = '';
                 items.forEach((item, index) => {
-                    const imgContent = item.img
-                        ? `<img src="${item.img}" alt="${item.word}" class="gallery__img" id="gallery-img-${index}">`
-                        : `<span class="material-symbols-outlined gallery__placeholder-icon" id="gallery-img-${index}">image</span>`;
+                    const imgContent = getGalleryImgHTML(item, index);
 
                     const cardHTML = `
                         <div class="gallery__card" id="gallery-card-${index}">
@@ -542,9 +511,7 @@ if (coverflowEl) {
                     const titleEl = document.getElementById(`gallery-title-${index}`);
 
                     if (wrapEl && titleEl) {
-                        wrapEl.innerHTML = item.img
-                            ? `<img src="${item.img}" alt="${item.word}" class="gallery__img" id="gallery-img-${index}">`
-                            : `<span class="material-symbols-outlined gallery__placeholder-icon" id="gallery-img-${index}">image</span>`;
+                        wrapEl.innerHTML = getGalleryImgHTML(item, index);
                         titleEl.innerText = item.word;
                     }
                 });
@@ -552,8 +519,10 @@ if (coverflowEl) {
         }
     }
 
-    // Kezdeti galéria betöltés
-    renderGallery(currentLetter);
+    // Kezdeti galéria betöltés (amint a gallery.json megérkezett)
+    galleryReady.then(() => {
+        renderGallery(currentLetter);
+    });
 
     // Ábécé gombok logikája
     document.querySelectorAll('.alphabet-scroll__btn').forEach(btn => {

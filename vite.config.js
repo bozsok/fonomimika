@@ -68,7 +68,12 @@ export default defineConfig(({ mode }) => {
       proxy: {
         '^/data/.*': {
           target: 'https://petofink.edu.hu/fono',
-          changeOrigin: true
+          changeOrigin: true,
+          bypass: (req) => {
+            if (req.url && req.url.includes('gallery.json')) {
+              return req.url;
+            }
+          }
         },
         '^/api/.*': {
           target: 'https://petofink.edu.hu/fono',
