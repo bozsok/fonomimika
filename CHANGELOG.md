@@ -2,6 +2,24 @@
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
 
+## [1.8.0] - 2026-11-01
+### Hozzáadva
+- **Jelszóval védett pedagógusi belépő modul**: A fejléc jobb oldalán elhelyezett diszkrét „Belépés” gomb és a Súgó stílusát követő felugró buborék (tooltip popover) segítségével a pedagógusok biztonságosan beléphetnek az adminisztrációs felületre.
+  - Alapértelmezett pedagógus jelszó: `agika01`.
+  - Helytelen jelszó esetén beépített hibajelzés figyelmeztet.
+- **Dedikált, integrált „Haladás” nézet (`#view-progress`)**: A korábban lebegő felugró ablak helyett egy teljes értékű, harmadik nézetként beépülő oldal valósult meg a Tanítás és Gyakorlás menüpontok mellett.
+  - Alapértelmezetten a „Haladás” menüpont rejtve van a gyermekek elől, és kizárólag sikeres belépést követően válik láthatóvá.
+  - Helyes jelszó beírásakor a felület automatikusan átvált a Haladás nézetre.
+- **Tanulói névsor és gyorskereső a bal oldalsávban**: Haladás nézetben a betűk helyét a diákok névsora (név és osztály) veszi át a `students.json` adatbázisból, a tetején valós idejű név- és osztálykeresővel.
+- **44 betűs interaktív elsajátítás-kezelő felület**: A jobb oldali kártyán a kiválasztott diák neve és osztálya, az összesített statisztika (megtanult betűk száma), valamint a teljes magyar ábécé 44 betűs gombhálózata jelenik meg.
+  - A már megtanult betűk az alkalmazás kék alapszínével (`var(--color-secondary)`) jelennek meg.
+  - Bármelyik betűre kattintva az elsajátítás állapota azonnal módosítható, és a háttérben valós időben mentődik a szerverre (`save_data.php`).
+- **Kényelmes pedagógusi kijelentkezés**: Belépett állapotban a fejléc gombja átvált „Kilépés” funkcióra (nyitott lakat ikonnal). Erre kattintva a Haladás menüpont azonnal elrejtőzik, és a felület visszatér a tanulói Tanítás nézetre, így a gép biztonsággal átadható a diáknak.
+
+### Módosítva
+- **Régi adminisztrációs modál kivezetése**: A korábbi, főcímre való 5 kattintással elérhető rejtett felugró ablak (`#teacher-modal`, `admin-trigger`) és a kapcsolódó számláló kód teljesen törlésre került a tiszta, korszerű integrált nézet javára.
+- **Demó mód védelme**: Nyilvános demó üzemmódban a pedagógus belépő gomb automatikusan elrejtőzik a felületről.
+
 ## [1.7.0] - 2026-11-01
 ### Hozzáadva
 - **Tanítás és Gyakorlás nézetváltó rendszer**: A felső navigációs sávban aktívvá vált a „Gyakorlás” menüpont, lehetővé téve a tanítási és rögzítési fázisok tiszta szétválasztását.

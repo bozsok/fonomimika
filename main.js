@@ -381,9 +381,12 @@ initHints().then(() => {
 const galleryReady = initGallery();
 initAvatarModal();
 const coverflowEl = document.getElementById('letter-coverflow');
+const navProgressBtn = document.getElementById('nav-btn-progress');
+let currentLetter = 'A';
+let currentMainView = 'teach';
+let switchView = () => {};
 
 if (coverflowEl) {
-    let currentLetter = 'A';
     let activeIndex = 0; // 0: front, 1: right, 2: back, 3: left
 
     function updateCoverflowFaces(letter) {
@@ -524,34 +527,69 @@ if (coverflowEl) {
         renderGallery(currentLetter);
     });
 
-    // --- Főmenü Nézetváltás (Tanítás / Gyakorlás) ---
+    // --- Főmenü Nézetváltás (Tanítás / Gyakorlás / Haladás) ---
     const navTeachBtn = document.getElementById('nav-btn-teach');
     const navPracticeBtn = document.getElementById('nav-btn-practice');
     const viewTeaching = document.getElementById('view-teaching');
     const viewPractice = document.getElementById('view-practice');
+    const viewProgress = document.getElementById('view-progress');
+    const sidebarStudentContent = document.getElementById('sidebar-student-content');
+    const sidebarTeacherContent = document.getElementById('sidebar-teacher-content');
+    const appContainer = document.querySelector('.app-container');
 
-    function switchView(viewName) {
+    switchView = function (viewName) {
+        currentMainView = viewName;
+
+        // Bármelyik nézetváltáskor, ha ment a videó a Tanítás nézetben, megállítjuk
+        const videoEl = document.getElementById('instructional-video');
+        const overlayBtn = document.getElementById('video-overlay-btn');
+        if (videoEl && !videoEl.paused) {
+            videoEl.pause();
+            if (overlayBtn) overlayBtn.style.display = 'flex';
+        }
+
         if (viewName === 'teach') {
             if (navTeachBtn) navTeachBtn.classList.add('app-header__nav-item--active');
             if (navPracticeBtn) navPracticeBtn.classList.remove('app-header__nav-item--active');
+            if (navProgressBtn) navProgressBtn.classList.remove('app-header__nav-item--active');
+
             if (viewTeaching) viewTeaching.classList.remove('learning-hero--hidden');
             if (viewPractice) viewPractice.classList.add('gallery--hidden');
+            if (viewProgress) viewProgress.classList.add('progress-view--hidden');
+
+            if (sidebarStudentContent) sidebarStudentContent.style.display = '';
+            if (sidebarTeacherContent) sidebarTeacherContent.style.display = 'none';
+            if (appContainer) appContainer.classList.remove('app-container--teacher-mode');
         } else if (viewName === 'practice') {
             if (navPracticeBtn) navPracticeBtn.classList.add('app-header__nav-item--active');
             if (navTeachBtn) navTeachBtn.classList.remove('app-header__nav-item--active');
+            if (navProgressBtn) navProgressBtn.classList.remove('app-header__nav-item--active');
+
             if (viewTeaching) viewTeaching.classList.add('learning-hero--hidden');
             if (viewPractice) viewPractice.classList.remove('gallery--hidden');
+            if (viewProgress) viewProgress.classList.add('progress-view--hidden');
 
-            // Ha ment a videó a Tanítás nézetben, szüneteltetjük
-            const videoEl = document.getElementById('instructional-video');
-            const overlayBtn = document.getElementById('video-overlay-btn');
-            if (videoEl && !videoEl.paused) {
-                videoEl.pause();
-                if (overlayBtn) overlayBtn.style.display = 'flex';
-            }
+            if (sidebarStudentContent) sidebarStudentContent.style.display = '';
+            if (sidebarTeacherContent) sidebarTeacherContent.style.display = 'none';
+            if (appContainer) appContainer.classList.remove('app-container--teacher-mode');
 
             // Gyakorlás megjelenítésekor biztosítjuk a kártyák frissességét
             renderGallery(currentLetter);
+        } else if (viewName === 'progress') {
+            if (navProgressBtn) navProgressBtn.classList.add('app-header__nav-item--active');
+            if (navTeachBtn) navTeachBtn.classList.remove('app-header__nav-item--active');
+            if (navPracticeBtn) navPracticeBtn.classList.remove('app-header__nav-item--active');
+
+            if (viewTeaching) viewTeaching.classList.add('learning-hero--hidden');
+            if (viewPractice) viewPractice.classList.add('gallery--hidden');
+            if (viewProgress) viewProgress.classList.remove('progress-view--hidden');
+
+            if (sidebarStudentContent) sidebarStudentContent.style.display = 'none';
+            if (sidebarTeacherContent) sidebarTeacherContent.style.display = 'flex';
+            if (appContainer) appContainer.classList.add('app-container--teacher-mode');
+
+            // Tanulók listájának és részleteinek inicializálása
+            initTeacherProgressView();
         }
     }
 
@@ -566,6 +604,13 @@ if (coverflowEl) {
         navPracticeBtn.addEventListener('click', (e) => {
             e.preventDefault();
             switchView('practice');
+        });
+    }
+
+    if (navProgressBtn) {
+        navProgressBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchView('progress');
         });
     }
 
@@ -768,64 +813,142 @@ document.querySelectorAll('.pressable-btn, .app-header__btn, .alphabet-scroll__b
 });
 
 /* ========================================================================= */
-/* Teacher Admin Modal Logic (5 kattintásos rejtett belépés)                 */
+/* Pedagógus Belépés és Haladás Nézet Logika                                */
 /* ========================================================================= */
-const adminTrigger = document.getElementById('admin-trigger');
-const teacherModal = document.getElementById('teacher-modal');
-const closeTeacherModal = document.getElementById('close-teacher-modal');
+const TEACHER_PASSWORD = 'agika01';
+let isTeacherAuthenticated = false;
+let teacherSelectedStudent = null;
+
+const btnTeacherAuth = document.getElementById('btn-teacher-auth');
+const teacherAuthIcon = document.getElementById('teacher-auth-icon');
+const teacherAuthText = document.getElementById('teacher-auth-text');
+const teacherAuthPopover = document.getElementById('teacher-auth-popover');
+const teacherAuthClose = document.getElementById('teacher-auth-close');
+const teacherAuthForm = document.getElementById('teacher-auth-form');
+const teacherPasswordInput = document.getElementById('teacher-password-input');
+const teacherAuthError = document.getElementById('teacher-auth-error');
 const teacherSearch = document.getElementById('teacher-search');
 const teacherStudentList = document.getElementById('teacher-student-list');
 
-let adminClickCount = 0;
-let adminClickTimeout;
-let teacherSelectedStudent = null;
+// Demó módban elrejtjük a pedagógus belépőt
+if (import.meta.env.VITE_APP_MODE === 'demo') {
+    const teacherContainer = document.querySelector('.teacher-auth-container');
+    if (teacherContainer) teacherContainer.style.display = 'none';
+}
 
-if (adminTrigger) {
-    adminTrigger.addEventListener('click', () => {
-        // Demó módban teljesen letiltjuk az admin felület elérését
-        if (import.meta.env.VITE_APP_MODE === 'demo') {
+function showTeacherAuthPopover() {
+    if (!teacherAuthPopover) return;
+    teacherAuthPopover.style.display = 'block';
+    if (teacherAuthError) teacherAuthError.style.display = 'none';
+    if (teacherPasswordInput) {
+        teacherPasswordInput.value = '';
+        setTimeout(() => teacherPasswordInput.focus(), 50);
+    }
+    setTimeout(() => {
+        teacherAuthPopover.classList.add('teacher-auth-popover--show');
+    }, 10);
+}
+
+function hideTeacherAuthPopover() {
+    if (!teacherAuthPopover) return;
+    teacherAuthPopover.classList.remove('teacher-auth-popover--show');
+    setTimeout(() => {
+        teacherAuthPopover.style.display = 'none';
+    }, 250);
+}
+
+if (btnTeacherAuth) {
+    btnTeacherAuth.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        // Ha már be van jelentkezve: rákattintva kijelentkezik
+        if (isTeacherAuthenticated) {
+            isTeacherAuthenticated = false;
+            if (teacherAuthIcon) teacherAuthIcon.textContent = 'lock';
+            if (teacherAuthText) teacherAuthText.textContent = 'Belépés';
+            btnTeacherAuth.classList.remove('pressable-btn--teacher--active');
+            btnTeacherAuth.title = 'Pedagógus belépés';
+
+            if (navProgressBtn) navProgressBtn.style.display = 'none';
+
+            // Ha éppen a Haladás nézetben volt, visszatérünk a Tanítás fülre
+            if (currentMainView === 'progress') {
+                switchView('teach');
+            }
             return;
         }
-        adminClickCount++;
-        clearTimeout(adminClickTimeout);
-        
-        if (adminClickCount >= 5) {
-            adminClickCount = 0;
-            openTeacherModal();
+
+        // Ha nincs bejelentkezve: megnyitja/bezárja a jelszókérő tooltipet
+        if (teacherAuthPopover && teacherAuthPopover.classList.contains('teacher-auth-popover--show')) {
+            hideTeacherAuthPopover();
         } else {
-            adminClickTimeout = setTimeout(() => {
-                adminClickCount = 0;
-            }, 1500); // 1.5 másodpercen belül kell az 5 kattintás
+            showTeacherAuthPopover();
         }
     });
 }
 
-if (closeTeacherModal) {
-    closeTeacherModal.addEventListener('click', () => {
-        teacherModal.style.display = 'none';
+if (teacherAuthClose) {
+    teacherAuthClose.addEventListener('click', (e) => {
+        e.stopPropagation();
+        hideTeacherAuthPopover();
     });
 }
 
-function openTeacherModal() {
-    teacherModal.style.display = 'flex';
+// Kattintás a popoveren kívülre bezárja azt
+document.addEventListener('click', (e) => {
+    if (teacherAuthPopover && teacherAuthPopover.classList.contains('teacher-auth-popover--show')) {
+        if (!teacherAuthPopover.contains(e.target) && (!btnTeacherAuth || !btnTeacherAuth.contains(e.target))) {
+            hideTeacherAuthPopover();
+        }
+    }
+});
+
+// Pedagógus belépési űrlap beküldése
+if (teacherAuthForm) {
+    teacherAuthForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const enteredPassword = teacherPasswordInput ? teacherPasswordInput.value.trim() : '';
+
+        if (enteredPassword === TEACHER_PASSWORD) {
+            isTeacherAuthenticated = true;
+            if (teacherAuthIcon) teacherAuthIcon.textContent = 'lock_open';
+            if (teacherAuthText) teacherAuthText.textContent = 'Kilépés';
+            if (btnTeacherAuth) {
+                btnTeacherAuth.classList.add('pressable-btn--teacher--active');
+                btnTeacherAuth.title = 'Pedagógus kijelentkezés';
+            }
+
+            if (navProgressBtn) navProgressBtn.style.display = 'inline-flex';
+
+            hideTeacherAuthPopover();
+            // Azonnal a Haladás oldalra lépünk
+            switchView('progress');
+        } else {
+            if (teacherAuthError) teacherAuthError.style.display = 'block';
+            if (teacherPasswordInput) {
+                teacherPasswordInput.select();
+            }
+        }
+    });
+}
+
+function initTeacherProgressView() {
+    const list = studentDB?.students || [];
+
+    // Ha még nincs kiválasztott diák, de van diák az adatbázisban, kiválasztjuk az elsőt
+    if (!teacherSelectedStudent && list.length > 0) {
+        teacherSelectedStudent = list[0];
+    }
+
     if (teacherSearch) teacherSearch.value = '';
-    renderTeacherStudentList(studentDB?.students || []);
-    
-    // Alapértelmezett, üres Detail nézet
-    teacherSelectedStudent = null;
-    const nameEl = document.getElementById('teacher-detail-name');
-    const classEl = document.getElementById('teacher-detail-class');
-    const gridEl = document.getElementById('teacher-alphabet-grid');
-    
-    if (nameEl) nameEl.innerText = 'Válassz egy tanulót!';
-    if (classEl) classEl.innerText = 'Itt tudod rögzíteni az elsajátított betűket.';
-    if (gridEl) gridEl.innerHTML = '';
+    renderTeacherStudentList(list);
+    renderTeacherDetail();
 }
 
 function renderTeacherStudentList(list) {
     if (!teacherStudentList) return;
     teacherStudentList.innerHTML = '';
-    
+
     if (list.length === 0) {
         teacherStudentList.innerHTML = '<p style="color: var(--color-on-surface-variant); padding: 1rem;">Nincs találat.</p>';
         return;
@@ -834,27 +957,26 @@ function renderTeacherStudentList(list) {
     list.forEach(student => {
         const item = document.createElement('div');
         item.className = 'teacher-student-item';
-        
-        // Ha van kiválasztott diák, és megegyezik, akkor aktív osztályt kap
+
+        // Ha a kiválasztott diák megegyezik, aktív stílust kap
         if (teacherSelectedStudent && teacherSelectedStudent.name === student.name) {
             item.classList.add('teacher-student-item--active');
         }
-        
+
         item.innerHTML = `
             <div>
-                <div style="font-size: 1.1rem; margin-bottom: 0.2rem;">${student.name}</div>
-                <div style="font-size: 0.85rem; opacity: 0.8;">${student.class}</div>
+                <div style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.2rem;">${student.name}</div>
+                <div style="font-size: 0.85rem; opacity: 0.85;">${student.class || 'Nincs osztály'}</div>
             </div>
-            <span class="material-symbols-outlined" style="font-size: 1.5rem;">chevron_right</span>
+            <span class="material-symbols-outlined" style="font-size: 1.25rem;">chevron_right</span>
         `;
-        
+
         item.addEventListener('click', () => {
             teacherSelectedStudent = student;
-            // Újra rendereljük a listát, hogy a kiválasztott stílus frissüljön
             renderTeacherStudentList(list);
             renderTeacherDetail();
         });
-        
+
         teacherStudentList.appendChild(item);
     });
 }
@@ -863,14 +985,14 @@ if (teacherSearch) {
     teacherSearch.addEventListener('input', (e) => {
         const val = normalizeStr(e.target.value);
         const list = studentDB?.students || [];
-        
+
         if (!val) {
             renderTeacherStudentList(list);
             return;
         }
-        
-        const filtered = list.filter(s => 
-            normalizeStr(s.name).includes(val) || 
+
+        const filtered = list.filter(s =>
+            normalizeStr(s.name).includes(val) ||
             normalizeStr(s.class || '').includes(val)
         );
         renderTeacherStudentList(filtered);
@@ -878,52 +1000,74 @@ if (teacherSearch) {
 }
 
 function renderTeacherDetail() {
-    if (!teacherSelectedStudent) return;
-    
-    document.getElementById('teacher-detail-name').innerText = teacherSelectedStudent.name;
-    document.getElementById('teacher-detail-class').innerText = `${teacherSelectedStudent.class} - Elsajátított betűk kezelése`;
-    
+    const nameEl = document.getElementById('teacher-detail-name');
+    const classEl = document.getElementById('teacher-detail-class');
+    const statsEl = document.getElementById('teacher-detail-stats');
+    const badgeEl = document.getElementById('teacher-detail-badge');
     const grid = document.getElementById('teacher-alphabet-grid');
+
+    if (!grid) return;
     grid.innerHTML = '';
-    
+
+    if (!teacherSelectedStudent) {
+        if (nameEl) nameEl.innerText = 'Válassz egy tanulót!';
+        if (classEl) classEl.innerText = 'A bal oldali névsorból válassz ki egy diákot az elsajátított betűk kezeléséhez.';
+        if (statsEl) statsEl.style.display = 'none';
+        return;
+    }
+
+    if (nameEl) nameEl.innerText = teacherSelectedStudent.name;
+    if (classEl) classEl.innerText = `${teacherSelectedStudent.class || 'Nincs osztály megadva'} • Elsajátított betűk kezelése`;
+
     // Biztosítjuk, hogy a diák adatobjektumában létezzen a learnedLetters tömb
     if (!Array.isArray(teacherSelectedStudent.learnedLetters)) {
         teacherSelectedStudent.learnedLetters = [];
     }
-    
-    // Teljes ábécé gombok renderelése
+
     const alphabet = ['A', 'Á', 'B', 'C', 'Cs', 'D', 'Dz', 'Dzs', 'E', 'É', 'F', 'G', 'Gy', 'H', 'I', 'Í', 'J', 'K', 'L', 'Ly', 'M', 'N', 'Ny', 'O', 'Ó', 'Ö', 'Ő', 'P', 'Q', 'R', 'S', 'Sz', 'T', 'Ty', 'U', 'Ú', 'Ü', 'Ű', 'V', 'W', 'X', 'Y', 'Z', 'Zs'];
-    
+
+    function updateStatsBadge() {
+        if (statsEl && badgeEl) {
+            statsEl.style.display = 'block';
+            badgeEl.innerText = `${teacherSelectedStudent.learnedLetters.length} / ${alphabet.length} betű megtanulva`;
+        }
+    }
+
+    updateStatsBadge();
+
     alphabet.forEach(letter => {
         const btn = document.createElement('button');
         btn.className = 'teacher-alphabet-btn';
         btn.innerText = letter;
-        
-        // Ha már megtanulta, adjuk hozzá az aktív stílust
+
+        // Ha már megtanulta, kék hátteret kap
         if (teacherSelectedStudent.learnedLetters.includes(letter)) {
             btn.classList.add('teacher-alphabet-btn--learned');
         }
-        
+
         btn.addEventListener('click', () => {
             const idx = teacherSelectedStudent.learnedLetters.indexOf(letter);
             if (idx > -1) {
-                // Ha benne van, töröljük (már nem tudja)
+                // Ha benne van, töröljük
                 teacherSelectedStudent.learnedLetters.splice(idx, 1);
                 btn.classList.remove('teacher-alphabet-btn--learned');
             } else {
-                // Ha nincs benne, hozzáadjuk (megtanulta)
+                // Ha nincs benne, hozzáadjuk
                 teacherSelectedStudent.learnedLetters.push(letter);
                 btn.classList.add('teacher-alphabet-btn--learned');
             }
-            // Azonnali mentés a PHP backend felé!
+
+            updateStatsBadge();
+
+            // Azonnali mentés a szerverre
             saveToDatabase();
-            
+
             // Ha a jelenleg bejelentkezett felhasználót módosítjuk, azonnal frissítjük a főfelületet is
             if (currentStudent && teacherSelectedStudent.name === currentStudent.name) {
                 updateLearnedLettersUI();
             }
         });
-        
+
         grid.appendChild(btn);
     });
 }

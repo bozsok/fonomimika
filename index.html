@@ -47,54 +47,46 @@
         </div>
     </div>
 
-    <!-- Teacher Admin Modal -->
-    <div id="teacher-modal" class="login-modal" style="display: none; align-items: center;">
-        <div class="login-modal__card teacher-modal__card">
-            <span id="close-teacher-modal" class="modal-close material-symbols-outlined">close</span>
-            <div class="teacher-modal__grid">
-                <!-- Master: Kereső és Diáklista -->
-                <div class="teacher-modal__master">
-                    <h2 class="teacher-modal__title">Tanulók listája</h2>
-                    <div class="login-modal__input-wrapper">
-                        <input type="text" id="teacher-search" class="login-modal__input" placeholder="Név, vagy osztály...">
-                        <span class="material-symbols-outlined login-modal__input-icon">search</span>
-                    </div>
-                    <div class="teacher-modal__list" id="teacher-student-list">
-                        <!-- Ide jön a diáklista -->
-                    </div>
-                </div>
-                <!-- Detail: Tanuló adatai és ábécé -->
-                <div class="teacher-modal__detail">
-                    <h2 class="teacher-modal__title" id="teacher-detail-name">Válassz egy tanulót!</h2>
-                    <p class="teacher-modal__subtitle" id="teacher-detail-class">Itt tudod rögzíteni az elsajátított betűket.</p>
-                    <div class="teacher-modal__alphabet" id="teacher-alphabet-grid">
-                        <!-- Ide jön az ABC -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Main App Content -->
     <div id="app-content">
         <!-- TopAppBar -->
         <header class="app-header">
-            <div class="app-header__title app-header__title--primary" id="admin-trigger">Fonomimika tanoda</div>
+            <div class="app-header__title app-header__title--primary">Fonomimika tanoda</div>
             <nav class="app-header__nav">
                 <a href="#" class="app-header__nav-item app-header__nav-item--active" id="nav-btn-teach">Tanítás</a>
                 <a href="#" class="app-header__nav-item" id="nav-btn-practice">Gyakorlás</a>
-                <a href="#" class="app-header__nav-item app-header__nav-item--disabled" id="nav-btn-progress">Haladás</a>
+                <a href="#" class="app-header__nav-item" id="nav-btn-progress" style="display: none;">Haladás</a>
             </nav>
             <div class="app-header__actions">
-                <button class="app-header__btn material-symbols-outlined">account_circle</button>
-                <button class="app-header__btn material-symbols-outlined">settings</button>
+                <div class="teacher-auth-container">
+                    <button class="pressable-btn pressable-btn--teacher" id="btn-teacher-auth" title="Pedagógus belépés">
+                        <span class="material-symbols-outlined" id="teacher-auth-icon">lock</span>
+                        <span id="teacher-auth-text">Belépés</span>
+                    </button>
+
+                    <!-- Tooltip stílusú pedagógus belépő popover -->
+                    <div class="teacher-auth-popover" id="teacher-auth-popover" style="display: none;">
+                        <button class="teacher-auth-popover__close material-symbols-outlined" id="teacher-auth-close">close</button>
+                        <h3 class="teacher-auth-popover__title">Pedagógus belépés</h3>
+                        <p class="teacher-auth-popover__subtitle">Add meg a jelszót a haladási adatok kezeléséhez!</p>
+                        <form id="teacher-auth-form" class="teacher-auth-popover__form" onsubmit="return false;">
+                            <input type="password" id="teacher-password-input" class="teacher-auth-popover__input" placeholder="Jelszó..." autocomplete="current-password">
+                            <button type="submit" id="teacher-auth-submit" class="teacher-auth-popover__submit">Belépés</button>
+                            <div id="teacher-auth-error" class="teacher-auth-popover__error" style="display: none;">Hibás jelszó!</div>
+                        </form>
+                    </div>
+                </div>
+                <button class="app-header__btn material-symbols-outlined" title="Profil">account_circle</button>
+                <button class="app-header__btn material-symbols-outlined" title="Beállítások">settings</button>
             </div>
         </header>
 
         <div class="app-container">
-            <!-- SideNavBar / Alphabet List -->
+            <!-- SideNavBar / Alphabet List or Teacher Students -->
             <aside class="app-sidebar">
-                <div class="app-sidebar__profile">
+                <!-- Tanulói oldalsáv tartalom -->
+                <div id="sidebar-student-content" class="app-sidebar__student-content">
+                    <div class="app-sidebar__profile">
                     <div id="sidebar-user-info" class="app-sidebar__user-info">
                         <div class="app-sidebar__avatar">M</div>
                         <div>
@@ -176,6 +168,21 @@
                             <div class="help-tooltip__content" id="help-tooltip-content">
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pedagógusi oldalsáv tartalom (Haladás nézetben) -->
+            <div id="sidebar-teacher-content" class="app-sidebar__teacher-content" style="display: none;">
+                    <div class="teacher-sidebar-header">
+                        <h2 class="teacher-sidebar-title">Tanulók névsora</h2>
+                        <div class="login-modal__input-wrapper teacher-sidebar-search">
+                            <input type="text" id="teacher-search" class="login-modal__input" placeholder="Név vagy osztály keresése...">
+                            <span class="material-symbols-outlined login-modal__input-icon">search</span>
+                        </div>
+                    </div>
+                    <div class="teacher-sidebar-list" id="teacher-student-list">
+                        <!-- Ide jön dinamikusan a diáklista -->
                     </div>
                 </div>
             </aside>
@@ -322,6 +329,24 @@
                         <h2 class="gallery__title" id="gallery-title">A betűs szavak</h2>
                         <div class="gallery__grid" id="gallery-grid">
                             <!-- Ide kerülnek dinamikusan a kártyák a main.js-ből -->
+                        </div>
+                    </section>
+
+                    <!-- Progress Section (Haladás nézet pedagógusoknak) -->
+                    <section class="teacher-progress progress-view--hidden" id="view-progress">
+                        <div class="teacher-progress__header">
+                            <div class="teacher-progress__student-info">
+                                <h2 class="teacher-progress__student-name" id="teacher-detail-name">Válassz egy tanulót!</h2>
+                                <p class="teacher-progress__student-class" id="teacher-detail-class">A bal oldali névsorból válassz ki egy diákot az elsajátított betűk megtekintéséhez és rögzítéséhez.</p>
+                            </div>
+                            <div class="teacher-progress__stats" id="teacher-detail-stats" style="display: none;">
+                                <span class="teacher-progress__badge" id="teacher-detail-badge">0 / 44 betű megtanulva</span>
+                            </div>
+                        </div>
+                        <div class="teacher-progress__grid-wrapper">
+                            <div class="teacher-alphabet-grid" id="teacher-alphabet-grid">
+                                <!-- Ide jön az ABC gombhálózat -->
+                            </div>
                         </div>
                     </section>
 
