@@ -66,17 +66,12 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       proxy: {
-        '^/data/.*': {
-          target: 'https://petofink.edu.hu/fono',
-          changeOrigin: true,
-          bypass: (req) => {
-            if (req.url && req.url.includes('gallery.json')) {
-              return req.url;
-            }
-          }
+        '^/data/students\\.json': {
+          target: 'https://www.povazsonyagnes.hu/fono',
+          changeOrigin: true
         },
         '^/api/.*': {
-          target: 'https://petofink.edu.hu/fono',
+          target: 'https://www.povazsonyagnes.hu/fono',
           changeOrigin: true
         }
       }

@@ -81,9 +81,9 @@
         <header class="app-header">
             <div class="app-header__title app-header__title--primary" id="admin-trigger">Fonomimika tanoda</div>
             <nav class="app-header__nav">
-                <a href="#" class="app-header__nav-item app-header__nav-item--active">Tanítás</a>
-                <a href="#" class="app-header__nav-item app-header__nav-item--disabled">Gyakorlás</a>
-                <a href="#" class="app-header__nav-item app-header__nav-item--disabled">Haladás</a>
+                <a href="#" class="app-header__nav-item app-header__nav-item--active" id="nav-btn-teach">Tanítás</a>
+                <a href="#" class="app-header__nav-item" id="nav-btn-practice">Gyakorlás</a>
+                <a href="#" class="app-header__nav-item app-header__nav-item--disabled" id="nav-btn-progress">Haladás</a>
             </nav>
             <div class="app-header__actions">
                 <button class="app-header__btn material-symbols-outlined">account_circle</button>
@@ -231,8 +231,8 @@
                         <button class="alphabet-scroll__btn">Zs</button>
                     </div>
 
-                    <!-- Learning Hero Section -->
-                    <div class="learning-hero">
+                    <!-- Learning Hero Section (Tanítás nézet) -->
+                    <div class="learning-hero" id="view-teaching">
 
                         <!-- Top Row: Interactive Card + Mimicry -->
                         <div class="learning-hero__top">
@@ -317,8 +317,8 @@
 
                     </div>
 
-                    <!-- Bottom Gallery: Words starting with this letter -->
-                    <section class="gallery">
+                    <!-- Gallery Section (Gyakorlás nézet) -->
+                    <section class="gallery gallery--hidden" id="view-practice">
                         <h2 class="gallery__title" id="gallery-title">A betűs szavak</h2>
                         <div class="gallery__grid" id="gallery-grid">
                             <!-- Ide kerülnek dinamikusan a kártyák a main.js-ből -->

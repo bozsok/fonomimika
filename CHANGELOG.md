@@ -2,6 +2,21 @@
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
 
+## [1.7.0] - 2026-11-01
+### Hozzáadva
+- **Tanítás és Gyakorlás nézetváltó rendszer**: A felső navigációs sávban aktívvá vált a „Gyakorlás” menüpont, lehetővé téve a tanítási és rögzítési fázisok tiszta szétválasztását.
+  - **Tanítás nézet**: A gyermekek figyelmét a hang és a betűforma megismerésére fókuszálja az interaktív 3D kártya, a fonomimikai kézmozdulat és az oktatóvideó megjelenítésével.
+  - **Gyakorlás nézet**: Kizárólag a kiválasztott betűhöz tartozó 3 szókártyát tartalmazó szógalériát jeleníti meg, megszüntetve az alsó tagozatosok számára terhelő vizuális zsúfoltságot.
+- **Intelligens videóvédelem**: Ha a tanuló az oktatóvideó lejátszása közben átkattint a „Gyakorlás” fülre, a videó automatikusan szüneteltetésre kerül (`pause()`), megakadályozva a hang háttérben történő továbbjátszását.
+- **Reszponzív mobil fejlécmenü**: Keskeny képernyőkön (768px alatt) a menüpontok a fejléc alatt egy rendezett, érintésbarát sorba rendeződnek, így telefonon és tableten is akadálytalanul elérhető a Tanítás és Gyakorlás nézetek közötti váltás.
+
+### Módosítva
+- **Fejléc menüpontok vizuális stabilizálása (CSS)**: Megszüntettük a menüpontok közötti váltáskor tapasztalható függőleges ugrást és a sarokkerekítések késleltetett torzulását. Az inaktív gombok alapértelmezetten megkapták az átlátszó `4px` alsó keretet (`border-bottom: 4px solid transparent`), a sarokkerekítés kizárólag a felső élekre korlátozódott, az átmenet (`transition`) pedig célzott színváltásra lett szűkítve. Így a menüpont alatti jelzőcsík teljesen stabil és egyenes maradt mindkét állapotban.
+- **Új éles szerverdomain integrációja**: A backend és az adatintegráció a megszűnt kiszolgálóról átkerült az új éles címre (`https://www.povazsonyagnes.hu/fono`).
+- **Fejlesztői proxy optimalizálása (Best Practice & CORS-védelem)**:
+  - A `vite.config.js` proxy targetje közvetlenül a végleges `www` aldomainre lett beállítva, megelőzve a böngészőoldali CORS-blokkolást okozó 301-es HTTP átirányításokat.
+  - A proxy szabály finomhangolásával kizárólag a dinamikus tanulói adatbázis (`data/students.json`) és a mentési végpont (`/api/`) csatlakozik az éles szerverhez, miközben a statikus tananyagok (`hints.json`, `gallery.json`) a helyi gépről, hálózati késleltetés és hibaérzékenység nélkül szolgálódnak ki.
+
 ## [1.6.0] - 2026-10-30
 ### Hozzáadva
 - **Teljes magyar szógaléria-adatbázis (`gallery.json`)**: Létrejött a `public/data/gallery.json` adatállomány, amely a teljes magyar ábécé mind a 44 betűjéhez tartalmazza a kidolgozott szójegyzéket és a hozzájuk rendelt képútvonalakat a `Source/szavak adatbázishoz.txt` forrás alapján. A szavak szigorú pedagógiai szisztéma szerint épülnek fel minden betűnél (a szó a vizsgált betűvel kezdődik, benne van, vagy arra végződik).

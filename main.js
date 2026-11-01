@@ -524,6 +524,51 @@ if (coverflowEl) {
         renderGallery(currentLetter);
     });
 
+    // --- Főmenü Nézetváltás (Tanítás / Gyakorlás) ---
+    const navTeachBtn = document.getElementById('nav-btn-teach');
+    const navPracticeBtn = document.getElementById('nav-btn-practice');
+    const viewTeaching = document.getElementById('view-teaching');
+    const viewPractice = document.getElementById('view-practice');
+
+    function switchView(viewName) {
+        if (viewName === 'teach') {
+            if (navTeachBtn) navTeachBtn.classList.add('app-header__nav-item--active');
+            if (navPracticeBtn) navPracticeBtn.classList.remove('app-header__nav-item--active');
+            if (viewTeaching) viewTeaching.classList.remove('learning-hero--hidden');
+            if (viewPractice) viewPractice.classList.add('gallery--hidden');
+        } else if (viewName === 'practice') {
+            if (navPracticeBtn) navPracticeBtn.classList.add('app-header__nav-item--active');
+            if (navTeachBtn) navTeachBtn.classList.remove('app-header__nav-item--active');
+            if (viewTeaching) viewTeaching.classList.add('learning-hero--hidden');
+            if (viewPractice) viewPractice.classList.remove('gallery--hidden');
+
+            // Ha ment a videó a Tanítás nézetben, szüneteltetjük
+            const videoEl = document.getElementById('instructional-video');
+            const overlayBtn = document.getElementById('video-overlay-btn');
+            if (videoEl && !videoEl.paused) {
+                videoEl.pause();
+                if (overlayBtn) overlayBtn.style.display = 'flex';
+            }
+
+            // Gyakorlás megjelenítésekor biztosítjuk a kártyák frissességét
+            renderGallery(currentLetter);
+        }
+    }
+
+    if (navTeachBtn) {
+        navTeachBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchView('teach');
+        });
+    }
+
+    if (navPracticeBtn) {
+        navPracticeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchView('practice');
+        });
+    }
+
     // Ábécé gombok logikája
     document.querySelectorAll('.alphabet-scroll__btn').forEach(btn => {
         btn.addEventListener('click', () => {
