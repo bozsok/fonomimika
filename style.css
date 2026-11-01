@@ -1424,6 +1424,8 @@ body {
   transition: border-color 0.2s;
   box-sizing: border-box;
   font-family: inherit;
+  -webkit-text-security: disc;
+  text-security: disc;
 }
 
 .teacher-auth-popover__input:focus {

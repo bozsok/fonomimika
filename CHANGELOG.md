@@ -2,6 +2,13 @@
 
 Minden említésre méltó változtatás ebben a fájlban lesz rögzítve a Fonomimika projekthez.
 
+## [1.8.1] - 2026-11-01
+### Javítva
+- **Kéretlen böngészős jelszómentési ablak megszüntetése (Best Practice)**:
+  - A pedagógus belépő mező átalakításra került `type="text"` típusúvá a böngészők beépített jelszókezelő (Password Manager) heurisztikájának semlegesítésére. Így a betűk elsajátításakor lefutó háttérbeli adatrögzítés (`save_data.php`) többé nem aktiválja a felugró „Szeretné elmenteni a jelszót?” ablakot sem a helyi gépen, sem az éles kiszolgálón.
+  - A karakterek diszkrét elfedése natív CSS-alapú maszkolással (`-webkit-text-security: disc; text-security: disc;`) és univerzális JavaScript fallbackkel valósult meg, megőrizve a hagyományos jelszómezők megszokott, pöttyözött megjelenését minden böngészőben.
+  - A megadott jelszó a sikeres azonosítás pillanatában és a panel bezárásakor is azonnal és nyomtalanul törlődik a DOM-ból és a memóriából, megelőzve az iskolai közös számítógépeken az illetéktelen kitöltést.
+
 ## [1.8.0] - 2026-11-01
 ### Hozzáadva
 - **Jelszóval védett pedagógusi belépő modul**: A fejléc jobb oldalán elhelyezett diszkrét „Belépés” gomb és a Súgó stílusát követő felugró buborék (tooltip popover) segítségével a pedagógusok biztonságosan beléphetnek az adminisztrációs felületre.

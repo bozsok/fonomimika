@@ -824,7 +824,7 @@ const teacherAuthIcon = document.getElementById('teacher-auth-icon');
 const teacherAuthText = document.getElementById('teacher-auth-text');
 const teacherAuthPopover = document.getElementById('teacher-auth-popover');
 const teacherAuthClose = document.getElementById('teacher-auth-close');
-const teacherAuthForm = document.getElementById('teacher-auth-form');
+const teacherAuthSubmit = document.getElementById('teacher-auth-submit');
 const teacherPasswordInput = document.getElementById('teacher-password-input');
 const teacherAuthError = document.getElementById('teacher-auth-error');
 const teacherSearch = document.getElementById('teacher-search');
@@ -838,6 +838,7 @@ if (import.meta.env.VITE_APP_MODE === 'demo') {
 
 function showTeacherAuthPopover() {
     if (!teacherAuthPopover) return;
+    teacherEnteredPassword = '';
     teacherAuthPopover.style.display = 'block';
     if (teacherAuthError) teacherAuthError.style.display = 'none';
     if (teacherPasswordInput) {
@@ -851,7 +852,11 @@ function showTeacherAuthPopover() {
 
 function hideTeacherAuthPopover() {
     if (!teacherAuthPopover) return;
+    teacherEnteredPassword = '';
     teacherAuthPopover.classList.remove('teacher-auth-popover--show');
+    if (teacherPasswordInput) {
+        teacherPasswordInput.value = '';
+    }
     setTimeout(() => {
         teacherAuthPopover.style.display = 'none';
     }, 250);
@@ -903,31 +908,69 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Pedagógus belépési űrlap beküldése
-if (teacherAuthForm) {
-    teacherAuthForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const enteredPassword = teacherPasswordInput ? teacherPasswordInput.value.trim() : '';
+// Pedagógus belépési ellenőrzés és elküldés (Nem jelszómező, így nem aktiválja a böngésző jelszókezelőjét)
+let teacherEnteredPassword = '';
 
-        if (enteredPassword === TEACHER_PASSWORD) {
-            isTeacherAuthenticated = true;
-            if (teacherAuthIcon) teacherAuthIcon.textContent = 'lock_open';
-            if (teacherAuthText) teacherAuthText.textContent = 'Kilépés';
-            if (btnTeacherAuth) {
-                btnTeacherAuth.classList.add('pressable-btn--teacher--active');
-                btnTeacherAuth.title = 'Pedagógus kijelentkezés';
+function isTextSecuritySupported() {
+    return 'webkitTextSecurity' in document.body.style || 'textSecurity' in document.body.style;
+}
+
+if (teacherPasswordInput) {
+    teacherPasswordInput.addEventListener('input', (e) => {
+        if (!isTextSecuritySupported()) {
+            const val = e.target.value;
+            if (val.length > teacherEnteredPassword.length) {
+                teacherEnteredPassword += val.slice(teacherEnteredPassword.length);
+            } else {
+                teacherEnteredPassword = teacherEnteredPassword.slice(0, val.length);
             }
-
-            if (navProgressBtn) navProgressBtn.style.display = 'inline-flex';
-
-            hideTeacherAuthPopover();
-            // Azonnal a Haladás oldalra lépünk
-            switchView('progress');
+            e.target.value = '•'.repeat(teacherEnteredPassword.length);
         } else {
-            if (teacherAuthError) teacherAuthError.style.display = 'block';
-            if (teacherPasswordInput) {
-                teacherPasswordInput.select();
-            }
+            teacherEnteredPassword = e.target.value;
+        }
+    });
+}
+
+function submitTeacherAuth() {
+    const enteredPassword = (teacherEnteredPassword || (teacherPasswordInput ? teacherPasswordInput.value : '')).trim();
+
+    if (enteredPassword === TEACHER_PASSWORD) {
+        isTeacherAuthenticated = true;
+        if (teacherAuthIcon) teacherAuthIcon.textContent = 'lock_open';
+        if (teacherAuthText) teacherAuthText.textContent = 'Kilépés';
+        if (btnTeacherAuth) {
+            btnTeacherAuth.classList.add('pressable-btn--teacher--active');
+            btnTeacherAuth.title = 'Pedagógus kijelentkezés';
+        }
+
+        if (navProgressBtn) navProgressBtn.style.display = 'inline-flex';
+
+        // Azonnal kiürítjük a jelszómezőt a DOM-ból és a memóriából
+        teacherEnteredPassword = '';
+        if (teacherPasswordInput) {
+            teacherPasswordInput.value = '';
+        }
+
+        hideTeacherAuthPopover();
+        // Azonnal a Haladás oldalra lépünk
+        switchView('progress');
+    } else {
+        if (teacherAuthError) teacherAuthError.style.display = 'block';
+        if (teacherPasswordInput) {
+            teacherPasswordInput.select();
+        }
+    }
+}
+
+if (teacherAuthSubmit) {
+    teacherAuthSubmit.addEventListener('click', submitTeacherAuth);
+}
+
+if (teacherPasswordInput) {
+    teacherPasswordInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            submitTeacherAuth();
         }
     });
 }

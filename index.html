@@ -69,11 +69,11 @@
                         <button class="teacher-auth-popover__close material-symbols-outlined" id="teacher-auth-close">close</button>
                         <h3 class="teacher-auth-popover__title">Pedagógus belépés</h3>
                         <p class="teacher-auth-popover__subtitle">Add meg a jelszót a haladási adatok kezeléséhez!</p>
-                        <form id="teacher-auth-form" class="teacher-auth-popover__form" onsubmit="return false;">
-                            <input type="password" id="teacher-password-input" class="teacher-auth-popover__input" placeholder="Jelszó..." autocomplete="current-password">
-                            <button type="submit" id="teacher-auth-submit" class="teacher-auth-popover__submit">Belépés</button>
+                        <div class="teacher-auth-popover__form">
+                            <input type="text" id="teacher-password-input" class="teacher-auth-popover__input" placeholder="Jelszó..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                            <button type="button" id="teacher-auth-submit" class="teacher-auth-popover__submit">Belépés</button>
                             <div id="teacher-auth-error" class="teacher-auth-popover__error" style="display: none;">Hibás jelszó!</div>
-                        </form>
+                        </div>
                     </div>
                 </div>
                 <button class="app-header__btn material-symbols-outlined" title="Profil">account_circle</button>
